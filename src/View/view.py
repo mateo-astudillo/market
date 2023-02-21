@@ -33,4 +33,4 @@ class View:
 		elif page in self.inventory.values():
 			self.inventory.get(page)
 		else:
-			self.session.get("login"):
+			self.session.get("login")

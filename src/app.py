@@ -18,3 +18,8 @@ class App:
 if __name__  == "__main__":
 	app = App()
 	print("Start")
+	app.model.init_database()
+	if app.controller.session.get("login").login("Juan", "1234"):
+		print("logged")
+	else:
+		print("not logged")
