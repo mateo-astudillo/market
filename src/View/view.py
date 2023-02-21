@@ -24,3 +24,13 @@ class View:
 			"add": Add( self.controller.inventory.get("add") ),
 			"edit": Edit( self.controller.inventory.get("edit") )
 		}
+
+	def go(self, page:str):
+		if page in self.session.values():
+			self.session.get(page)
+		elif page in self.customer.values():
+			self.customer.get(page)
+		elif page in self.inventory.values():
+			self.inventory.get(page)
+		else:
+			self.session.get("login"):
