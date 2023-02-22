@@ -19,7 +19,7 @@ class LoginController(Controller):
 		if not self.model.user.login(username, password):
 			print("incorrect username or password")
 			return False
-
+		self.model.user.set_id(username)
 		print("logged: ", username, " ", password)
 		return True
 

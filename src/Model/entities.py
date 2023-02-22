@@ -10,7 +10,18 @@ SALT = getenv("SALT")
 
 class User:
 	def __init__(self):
-		pass
+		self.id = None
+
+	def set_id(self, username:str) -> bool:
+		query = "SELECT id From User Where username = ?;"
+		connection = connect(DATABASE)
+		cursor = connection.cursor()
+		cursor.execute( query, (username,) )
+		id = cursor.fetchone()
+		connection.commit()
+		connection.close()
+		self.id = id[0]
+		return bool(id)
 
 	def exists(self, username:str) -> bool:
 		query = "SELECT * FROM User WHERE username = ?;"
@@ -22,7 +33,7 @@ class User:
 		connection.close()
 		return bool(data)
 
-	def remove(self, username) -> bool:
+	def remove(self, username:str) -> bool:
 		query = "DELETE FROM User WHERE username = ?;"
 		try:
 			connection = connect(DATABASE)
@@ -36,7 +47,7 @@ class User:
 		connection.close()
 		return result
 
-	def set_data(self, id, colunm, value) -> bool:
+	def set_data(self, id:str, colunm:str, value:str) -> bool:
 		query = "UPDATE User SET %s = ? WHERE id = ?;"
 		try:
 			connection = connect(DATABASE)
@@ -50,7 +61,7 @@ class User:
 		connection.close()
 		return result
 
-	def change_username(self, id, username) -> bool:
+	def change_username(self, id:str, username:str) -> bool:
 		query = "UPDATE User SET username = ? WHERE id = ?;"
 		try:
 			connection = connect(DATABASE)
@@ -64,7 +75,7 @@ class User:
 		connection.close()
 		return result
 
-	def change_password(self, id, password) -> bool:
+	def change_password(self, id:str, password:str) -> bool:
 		password = self.hash(password)
 		query = "UPDATE User SET password = ? WHERE id = ?;"
 		try:
@@ -79,7 +90,7 @@ class User:
 		connection.close()
 		return result
 
-	def register(self, username, password) -> bool:
+	def register(self, username:str, password:str) -> bool:
 		password = self.hash(password)
 		query = "INSERT INTO User (username, password) VALUES(?, ?);"
 		try:
@@ -94,7 +105,7 @@ class User:
 		connection.close()
 		return result
 
-	def login(self, username, password) -> bool:
+	def login(self, username:str, password:str) -> bool:
 		password = self.hash(password)
 		query = "SELECT * FROM User WHERE username = (?) and password = (?);"
 		connection = connect(DATABASE)
@@ -107,6 +118,9 @@ class User:
 
 	def hash(self, password:str) -> str:
 		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
+
+	def save_id(self):
+		connection = connect(":memory:")
 
 
 class Sale:
