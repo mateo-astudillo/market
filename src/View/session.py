@@ -1,11 +1,10 @@
-from Controller.session import LoginController, RegisterController
+from .view import View
+
+class Login(View):
+	def __init__(self):
+		super().__init__()
 
 
-class Login:
-	def __init__(self, controller: LoginController):
-		self.controller = controller
-
-
-class Register:
-	def __init__(self, controller: RegisterController):
-		self.controller = controller
+class Register(View):
+	def __init__(self):
+		super().__init__()

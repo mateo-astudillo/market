@@ -1,5 +1,5 @@
 from re import match
-from .interface import Controller
+from .controller import Controller
 
 def validate_username(username):
 	username = username.replace(" ", "").replace("\n", "")

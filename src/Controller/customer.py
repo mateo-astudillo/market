@@ -1,24 +1,20 @@
+from .controller import Controller
+
+class MenuController(Controller):
+	def __init__(self):
+		super().__init__()
 
 
-class MenuController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
+class ShopController(Controller):
+	def __init__(self):
+		super().__init__()
 
 
-class ShopController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
+class CartController(Controller):
+	def __init__(self):
+		super().__init__()
 
 
-class CartController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
-
-
-class ProfileController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
+class ProfileController(Controller):
+	def __init__(self):
+		super().__init__()

@@ -1,18 +1,16 @@
+from .controller import Controller
 
 
-class OptionsController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
+class OptionsController(Controller):
+	def __init__(self):
+		super().__init__()
 
 
-class AddController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
+class AddController(Controller):
+	def __init__(self):
+		super().__init__()
 
 
-class EditController:
-	def __init__(self, controller):
-		self.view = controller.view
-		self.model = controller.model
+class EditController(Controller):
+	def __init__(self):
+		super().__init__()

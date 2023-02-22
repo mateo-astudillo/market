@@ -1,24 +1,43 @@
-from Controller import Controllers
-from View import View
+from Controller import *
+from View import *
 from Model import Model
 
 
 class App:
 	def __init__(self):
-		self.controller = Controllers()
-		self.view = View(self.controller)
-		self.model = Model(self.controller)
+		self.model = Model()
 
-		self.controller.set_view(self.view)
-		self.controller.set_model(self.model)
+		self.views = {
+			"login": Login(),
+			"register": Register(),
+			"menu": Menu(),
+			"shop": Shop(),
+			"cart": Cart(),
+			"profile": Profile(),
+			"options": Options(),
+			"add": Add(),
+			"edit": Edit(),
+		}
 
-		self.controller.set_views()
-		self.controller.set_models()
-		self.controller.run()
+		self.controllers = {
+			"login": LoginController(),
+			"register": RegisterController(),
+			"menu": MenuController(),
+			"shop": ShopController(),
+			"cart": CartController(),
+			"profile": ProfileController(),
+			"options": OptionsController(),
+			"add": AddController(),
+			"edit": EditController(),
+		}
+
+		for view, controller in self.controllers.items():
+			controller.set_view(self.views.get(view))
+			controller.set_model(self.model)
 
 
 if __name__  == "__main__":
 	app = App()
 	print("Start")
-	app.controller.session.get("login").login("juan123", "holacomoestas")
+	app.controllers.get("login").login("juan123", "holacomoestas")
 
