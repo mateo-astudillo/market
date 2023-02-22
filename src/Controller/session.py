@@ -36,7 +36,7 @@ class RegisterController(Controller):
 			print("invalid username")
 			return False
 		if self.model.user.exists(username):
-			print("username already exists")
+			print("Username already exists")
 			return False
 		if not self.model.user.register(username, password):
 			print("Error in database")

@@ -26,7 +26,11 @@ class ProfileController(Controller):
 		self.model.user.set_data(id, colunm, value)
 
 	def change_username(self, id, username):
-		self.model.user.change_username(id, username)
+		if not self.model.user.exists(username):
+			self.model.user.change_username(id, username)
+			print("The username has succesfully changed")
+		else:
+			print("The user already exists")
 
 	def change_password(self, id, password):
 		self.model.user.change_password(id, password)
