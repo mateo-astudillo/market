@@ -43,5 +43,8 @@ if __name__  == "__main__":
 	# app.controllers.get("register").register("juan123","holacomoestas")
 	# app.controllers.get("profile").change_username("jaun123","jose")
 	# app.controllers.get("profile").change_password("1","4321")
+	app.controllers.get("profile").set_data("1","surname","alfonsin")
+	# app.controllers.get("profile").set_data("1","surname","alfonso")
+	# app.controllers.get("profile").set_data("1","age","32")
 	app.controllers.get("login").login("juan123", "holacomoestas")
 

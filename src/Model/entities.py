@@ -30,14 +30,25 @@ class User:
 			cursor.execute(query, (username,) )
 			connection.commit()
 			result = True
-		except Exception:
-			print(Exception)
+		except Exception as ex:
+			print(ex)
 			result = False
 		connection.close()
 		return result
 
-	def edit(self, username, column, value) -> bool:
-		pass
+	def set_data(self, id, colunm, value) -> bool:
+		query = "UPDATE User SET %s = ? WHERE id = ?;"
+		try:
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
+			cursor.execute(query %(colunm, ), (value, id) )
+			connection.commit()
+			result = True
+		except Exception as ex:
+			print(ex)
+			result = False
+		connection.close()
+		return result
 
 	def change_username(self, id, username) -> bool:
 		query = "UPDATE User SET username = ? WHERE id = ?;"
@@ -47,8 +58,8 @@ class User:
 			cursor.execute(query, (username, id) )
 			connection.commit()
 			result = True
-		except Exception:
-			print(Exception)
+		except Exception as ex:
+			print(ex)
 			result = False
 		connection.close()
 		return result
@@ -62,8 +73,8 @@ class User:
 			cursor.execute(query, (password, id) )
 			connection.commit()
 			result = True
-		except Exception:
-			print(Exception)
+		except Exception as ex:
+			print(ex)
 			result = False
 		connection.close()
 		return result
@@ -77,8 +88,8 @@ class User:
 			cursor.execute( query, (username, password) )
 			connection.commit()
 			result = True
-		except Exception:
-			print(Exception)
+		except Exception as ex:
+			print(ex)
 			result = False
 		connection.close()
 		return result

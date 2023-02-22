@@ -22,6 +22,9 @@ class ProfileController(Controller):
 	def remove(self, username):
 		self.model.user.remove(username)
 
+	def set_data(self, id, colunm, value):
+		self.model.user.set_data(id, colunm, value)
+
 	def change_username(self, id, username):
 		self.model.user.change_username(id, username)
 
