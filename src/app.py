@@ -41,5 +41,6 @@ if __name__  == "__main__":
 	print("Start")
 	# app.model.init_database()
 	# app.controllers.get("register").register("juan123","holacomoestas")
+	app.controllers.get("profile").change_username("jaun123","jose")
 	app.controllers.get("login").login("juan123", "holacomoestas")
 

@@ -13,34 +13,47 @@ class User:
 		pass
 
 	def exists(self, username:str) -> bool:
-		query = "SELECT * FROM User WHERE username = (?);"
-		connetion = connect(DATABASE)
-		cursor = connetion.cursor()
+		query = "SELECT * FROM User WHERE username = ?;"
+		connection = connect(DATABASE)
+		cursor = connection.cursor()
 		cursor.execute( query, (username,) )
 		data = cursor.fetchone()
-		connetion.commit()
-		connetion.close()
+		connection.commit()
+		connection.close()
 		return bool(data)
 
 	def remove(self, username) -> bool:
 		query = "DELETE FROM User WHERE username = ?;"
 		try:
-			connetion = connect(DATABASE)
-			cursor = connetion.cursor()
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
 			cursor.execute(query, (username,) )
-			connetion.commit()
+			connection.commit()
 			result = True
-		except Exception as ex:
-			print(ex)
+		except Exception:
+			print(Exception)
 			result = False
-		connetion.close()
+		connection.close()
 		return result
 
 	def edit(self, username, column, value) -> bool:
 		pass
 
-	def change_username(self, username, password, new_username) -> bool:
-		pass
+	def change_username(self, username, new_username) -> bool:
+		query = "UPDATE User SET username = ? WHERE username = ?;"
+
+		try:
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
+			cursor.execute(query, (new_username, username) )
+			connection.commit()
+			result = True
+		except Exception:
+			print(Exception)
+			result = False
+
+		connection.close()
+		return result
 
 	def change_password(self, username, password, new_password) -> bool:
 		pass
@@ -49,26 +62,26 @@ class User:
 		password = self.hash(password)
 		query = "INSERT INTO User (username, password) VALUES(?, ?);"
 		try:
-			connetion = connect(DATABASE)
-			cursor = connetion.cursor()
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
 			cursor.execute( query, (username, password) )
-			connetion.commit()
+			connection.commit()
 			result = True
-		except Exception as ex:
-			print(ex)
+		except Exception:
+			print(Exception)
 			result = False
-		connetion.close()
+		connection.close()
 		return result
 
 	def login(self, username, password) -> bool:
 		password = self.hash(password)
 		query = "SELECT * FROM User WHERE username = (?) and password = (?);"
-		connetion = connect(DATABASE)
-		cursor = connetion.cursor()
+		connection = connect(DATABASE)
+		cursor = connection.cursor()
 		cursor.execute( query, (username, password) )
 		data = cursor.fetchone()
-		connetion.commit()
-		connetion.close()
+		connection.commit()
+		connection.close()
 		return bool(data)
 
 	def hash(self, password:str) -> str:
