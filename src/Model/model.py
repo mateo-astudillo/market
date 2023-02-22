@@ -42,7 +42,7 @@ class Model:
 				id integer PRIMARY KEY NOT NULL,
 				user_id integer,
 				product_id integer,
-				date datetime, 
+				date datetime,
 				price float
 			);
 			""",

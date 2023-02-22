@@ -18,3 +18,6 @@ class CartController(Controller):
 class ProfileController(Controller):
 	def __init__(self):
 		super().__init__()
+
+	def remove(self, username):
+		self.model.user.remove(username)
