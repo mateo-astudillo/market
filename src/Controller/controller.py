@@ -32,4 +32,7 @@ class Controller:
 		self.model = model
 
 	def run(self):
-		pass
+		if not self.model.init_database():
+			return False
+		self.view.go("login")
+		return True

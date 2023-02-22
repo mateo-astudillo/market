@@ -9,13 +9,14 @@ def validate_username(username):
 
 class LoginController:
 	def __init__(self, controller):
-		self.controller = controller
+		self.view = controller.view
+		self.model = controller.model
 
 	def login(self, username, password):
 		if not validate_username(username):
 			print("invalid username")
 			return False
-		if not self.controller.model.user.login(username, password):
+		if not self.model.user.login(username, password):
 			print("incorrect username or password")
 			return False
 
@@ -23,15 +24,16 @@ class LoginController:
 		return True
 
 	def sign_up(self):
-		self.controller.view.go("register")
+		self.view.go("register")
 
 
 class RegisterController:
 	def __init__(self, controller):
-		self.controller = controller
+		self.view = controller.view
+		self.model = controller.model
 
 	def register(self, username, password):
-		self.controller.model.user.register(username, password)
+		self.model.user.register(username, password)
 
 	def cancel(self):
-		self.controller.view.go("login")
+		self.view.go("login")
