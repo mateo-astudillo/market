@@ -23,7 +23,18 @@ class User:
 		return bool(data)
 
 	def remove(self, username) -> bool:
-		pass
+		query = "DELETE FROM User WHERE username = ?;"
+		try:
+			connetion = connect(DATABASE)
+			cursor = connetion.cursor()
+			cursor.execute(query, (username,) )
+			connetion.commit()
+			result = True
+		except Exception as ex:
+			print(ex)
+			result = False
+		connetion.close()
+		return result
 
 	def edit(self, username, column, value) -> bool:
 		pass
