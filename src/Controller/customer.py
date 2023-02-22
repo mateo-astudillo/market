@@ -22,10 +22,12 @@ class ProfileController(Controller):
 	def remove(self, username):
 		self.model.user.remove(username)
 
-	def set_data(self, id, colunm, value):
+	def set_data(self, colunm, value):
+		id = self.model.user.id
 		self.model.user.set_data(id, colunm, value)
 
-	def change_username(self, id, username):
+	def change_username(self, username):
+		id = self.model.user.id
 		if not self.model.user.exists(username):
 			self.model.user.change_username(id, username)
 			print("The username has succesfully changed")

@@ -35,6 +35,8 @@ class App:
 			controller.set_view(self.views.get(view))
 			controller.set_model(self.model)
 
+		for controller, view in self.views.items():
+			view.set_controller(self.controllers.get(controller))
 
 if __name__  == "__main__":
 	app = App()
@@ -46,5 +48,5 @@ if __name__  == "__main__":
 	# app.controllers.get("profile").set_data("1","surname","alfonsin")
 	# app.controllers.get("profile").set_data("1","surname","alfonso")
 	# app.controllers.get("profile").set_data("1","age","32")
-	app.controllers.get("login").login("juan123", "holacomoestas")
+	# app.controllers.get("login").login("juan123", "holacomoestas")
 
