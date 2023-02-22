@@ -39,5 +39,7 @@ class App:
 if __name__  == "__main__":
 	app = App()
 	print("Start")
+	# app.model.init_database()
+	# app.controllers.get("register").register("juan123","holacomoestas")
 	app.controllers.get("login").login("juan123", "holacomoestas")
 

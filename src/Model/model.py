@@ -19,38 +19,38 @@ class Model:
 			"""
 			CREATE TABLE IF NOT EXISTS User (
 				id integer PRIMARY KEY NOT NULL,
-				username varchar,
-				password varchar,
+				username varchar NOT NULL,
+				password varchar NOT NULL,
 				name varchar,
 				surname varchar,
 				age integer,
-				credit float
+				credit float DEFAULT 0
 			);
 			""",
 
 			"""
 			CREATE TABLE IF NOT EXISTS Product (
 				id integer PRIMARY KEY NOT NULL,
-				name varchar,
-				price float,
-				brand_id integer
+				name varchar NOT NULL,
+				price float DEFAULT 0 NOT NULL,
+				brand_id integer NOT NULL
 			);
 			""",
 
 			"""
 			CREATE TABLE IF NOT EXISTS Sale (
 				id integer PRIMARY KEY NOT NULL,
-				user_id integer,
-				product_id integer,
+				user_id integer NOT NULL,
+				product_id integer NOT NULL,
 				date datetime,
-				price float
+				price float DEFAULT 0
 			);
 			""",
 
 			"""
 			CREATE TABLE IF NOT EXISTS Brand (
 				id integer PRIMARY KEY NOT NULL,
-				name varchar
+				name varchar NOT NULL
 			);
 			"""
 		]
