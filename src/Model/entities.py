@@ -39,24 +39,34 @@ class User:
 	def edit(self, username, column, value) -> bool:
 		pass
 
-	def change_username(self, username, new_username) -> bool:
-		query = "UPDATE User SET username = ? WHERE username = ?;"
-
+	def change_username(self, id, username) -> bool:
+		query = "UPDATE User SET username = ? WHERE id = ?;"
 		try:
 			connection = connect(DATABASE)
 			cursor = connection.cursor()
-			cursor.execute(query, (new_username, username) )
+			cursor.execute(query, (username, id) )
 			connection.commit()
 			result = True
 		except Exception:
 			print(Exception)
 			result = False
-
 		connection.close()
 		return result
 
-	def change_password(self, username, password, new_password) -> bool:
-		pass
+	def change_password(self, id, password) -> bool:
+		password = self.hash(password)
+		query = "UPDATE User SET password = ? WHERE id = ?;"
+		try:
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
+			cursor.execute(query, (password, id) )
+			connection.commit()
+			result = True
+		except Exception:
+			print(Exception)
+			result = False
+		connection.close()
+		return result
 
 	def register(self, username, password) -> bool:
 		password = self.hash(password)
