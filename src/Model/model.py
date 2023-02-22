@@ -2,14 +2,14 @@ from sqlite3 import connect
 from os import getenv
 from dotenv import load_dotenv
 
-from Controller import Controller
+from Controller import Controllers
 from .entities import User, Sale, Product
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
 
 class Model:
-	def __init__(self, controller: Controller):
+	def __init__(self, controller: Controllers):
 		self.controller = controller
 
 		self.user = User()

@@ -12,6 +12,16 @@ class User:
 	def __init__(self):
 		pass
 
+	def exists(self, username:str) -> bool:
+		query = "SELECT * FROM User WHERE username = (?);"
+		connetion = connect(DATABASE)
+		cursor = connetion.cursor()
+		cursor.execute( query, (username,) )
+		data = cursor.fetchone()
+		connetion.commit()
+		connetion.close()
+		return bool(data)
+
 	def remove(self, username) -> bool:
 		pass
 
@@ -24,16 +34,23 @@ class User:
 	def change_password(self, username, password, new_password) -> bool:
 		pass
 
-	def register(self, username, password):
+	def register(self, username, password) -> bool:
 		password = self.hash(password)
 		query = "INSERT INTO User (username, password) VALUES(?, ?);"
-		connetion = connect(DATABASE)
-		cursor = connetion.cursor()
-		cursor.execute( query, (username, password) )
-		connetion.commit()
+		try:
+			connetion = connect(DATABASE)
+			cursor = connetion.cursor()
+			cursor.execute( query, (username, password) )
+			connetion.commit()
+			result = True
+		except Exception as ex:
+			print(ex)
+			result = False
 		connetion.close()
+		return result
 
 	def login(self, username, password) -> bool:
+		password = self.hash(password)
 		query = "SELECT * FROM User WHERE username = (?) and password = (?);"
 		connetion = connect(DATABASE)
 		cursor = connetion.cursor()

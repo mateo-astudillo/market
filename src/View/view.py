@@ -1,10 +1,10 @@
-from Controller import Controller
+from Controller import Controllers
 from .session import Login, Register
 from .customer import Menu, Shop, Cart, Profile 
 from .inventory import Options, Add, Edit
 
 class View:
-	def __init__(self, controller:Controller):
+	def __init__(self, controller:Controllers):
 		self.controller = controller
 
 		self.session = {

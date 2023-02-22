@@ -1,16 +1,16 @@
 from .session import LoginController, RegisterController
 from .customer import MenuController, ShopController, CartController, ProfileController
 from .inventory import OptionsController, AddController, EditController
+from .interface import Controller
 
 
-class Controller:
+class Controllers(Controller):
 	def __init__(self):
-		self.view = None
-		self.model = None
+		super().__init__()
 
 		self.session = {
-			"login": LoginController(self),
-			"register": RegisterController(self),
+			"login": LoginController(),
+			"register": RegisterController(),
 		}
 
 		self.customer = {
@@ -25,11 +25,13 @@ class Controller:
 			"edit": EditController(self),
 		}
 
-	def set_view(self, view):
-		self.view = view
+	def set_views(self):
+		for controller in self.session.values():
+			controller.set_view(self.view)
 
-	def set_model(self, model):
-		self.model = model
+	def set_models(self):
+		for controller in self.session.values():
+			controller.set_model(self.model)
 
 	def run(self):
 		if not self.model.init_database():
