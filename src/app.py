@@ -1,19 +1,19 @@
 from Controller import *
 from View import *
 from Model import Model
-
+from customtkinter import CTk
 
 class App:
-	def __init__(self):
+	def __init__(self, root):
 		self.model = Model()
 
 		self.views = {
-			"login": Login(),
-			"register": Register(),
+			"login": Login(root),
+			"register": Register(root),
 			"menu": Menu(),
 			"shop": Shop(),
 			"cart": Cart(),
-			"profile": Profile(),
+			"profile": Profile(root),
 			"options": Options(),
 			"add": Add(),
 			"edit": Edit(),
@@ -39,12 +39,11 @@ class App:
 			view.set_controller(self.controllers.get(controller))
 
 if __name__  == "__main__":
-	app = App()
-	print("Start")
+	root = CTk()
+	app = App(root)
+	app.views.get("profile").show()
 	app.model.init_database()
-	#app.controllers.get("register").register("juan","hola")
-	app.controllers.get("login").login("juan", "hola")
-	#app.controllers.get("add").add_product("Arbejas", 120, "Del Sur")
-	app.controllers.get("edit").remove_brand("Marolio")
+	app.controllers.get("register").register("juan","hola")
+	root.mainloop()
 
 
