@@ -45,6 +45,7 @@ if __name__  == "__main__":
 	#app.controllers.get("register").register("pepito","pass")
 	app.controllers.get("login").login("pepito", "pass")
 
-	# app.controllers.get("add").add_brand("hellman")
-	app.controllers.get("add").add_product("mayo","15","1")
+	#app.controllers.get("add").add_brand("nestle")
+	#app.controllers.get("add").add_product("cafe",300,"2")
+	app.controllers.get("add").remove_product("mayo")
 

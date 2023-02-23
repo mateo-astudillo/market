@@ -11,10 +11,13 @@ class AddController(Controller):
 		super().__init__()
 
 	def add_brand(self, name:str):
-		self.model.product.add_brand(name)
+		self.model.brand.add(name)
 
-	def add_product(self, name, price, brand):
-		self.model.product.add_product(name,price,brand)
+	def add_product(self, name:str, price:int, brand:int):
+		self.model.product.add(name,price,brand)
+
+	def remove_product(self, name:str):
+		self.model.product.remove(name)
 
 
 class EditController(Controller):

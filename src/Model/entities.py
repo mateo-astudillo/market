@@ -72,17 +72,22 @@ class Product:
 	def __init__(self):
 		pass
 
-	def add_product(self, name:str, price:str, brand:str) -> bool:
+	def add(self, name:str, price:int, brand:int) -> bool:
 		query = "INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);"
 		return Executor.execute( query,("name", "price", "brand_id"), (name, price, brand) )
 
-	def add_brand(self, name:str) -> bool:
-		query = "INSERT INTO Brand (%s) VALUES(?);"
-		return Executor.execute( query, ("name",), (name,) )
 
-
-	def remove(self, name) -> bool:
-		pass
+	def remove(self, name:str) -> bool:
+		query = "DELETE FROM Product WHERE name = ?;"
+		return Executor.execute_delete( query, (name, ) )
 
 	def edit(self, column, value) -> bool:
 		pass
+
+class Brand:
+	def __init__(self):
+		pass
+
+	def add(self, name:str) -> bool:
+		query = "INSERT INTO Brand (%s) VALUES(?);"
+		return Executor.execute( query, ("name",), (name,) )
