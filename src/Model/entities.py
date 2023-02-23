@@ -12,16 +12,15 @@ class User:
 	def __init__(self):
 		self.id = None
 
-
 	def set_id(self, username:str) -> bool:
 		query = "SELECT %s From User Where %s = ?;"
-		id = Executor.execute_select( query, ("id", "username"), (username,) )[0]
+		id = Executor.execute_select( query, ("id", "username"), (username,) )
 		self.id = id[0]
 		return bool(id)
 
 	def exists(self, username:str) -> bool:
 		query = "SELECT * FROM User WHERE %s = ?;"
-		data = Executor.execute_select( query, ("username",), (username,) )[0]
+		data = Executor.execute_select( query, ("username",), (username,) )
 		return bool(data)
 
 	def remove(self, id:str) -> bool:
@@ -72,8 +71,15 @@ class Sale:
 class Product:
 	def __init__(self):
 		pass
-	def add(self, name, price, brand) -> bool:
-		pass
+
+	def add_product(self, name:str, price:str, brand:str) -> bool:
+		query = "INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);"
+		return Executor.execute( query,("name", "price", "brand_id"), (name, price, brand) )
+
+	def add_brand(self, name:str) -> bool:
+		query = "INSERT INTO Brand (%s) VALUES(?);"
+		return Executor.execute( query, ("name",), (name,) )
+
 
 	def remove(self, name) -> bool:
 		pass
