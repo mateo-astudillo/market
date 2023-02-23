@@ -47,7 +47,7 @@ class ProfileController(Controller):
 		id = self.model.user.id
 		self.model.user.change_password(id, password)
 
-	def get_data(self) -> dict:
+	def get_user(self) -> dict:
 		id = self.model.user.id
 		username, name, surname, age = self.model.user.get_data(id)
 		user = {
