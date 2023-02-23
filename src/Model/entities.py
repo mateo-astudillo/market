@@ -14,13 +14,8 @@ class User:
 
 
 	def set_id(self, username:str) -> bool:
-		query = "SELECT id From User Where username = ?;"
-		connection = connect(DATABASE)
-		cursor = connection.cursor()
-		cursor.execute( query, (username,) )
-		id = cursor.fetchone()
-		connection.commit()
-		connection.close()
+		query = "SELECT %s From User Where %s = ?;"
+		id = Executor.execute_select( query, ("id", "username"), (username,) )[0]
 		self.id = id[0]
 		return bool(id)
 
