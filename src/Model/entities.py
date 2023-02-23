@@ -23,9 +23,7 @@ class User:
 		return True
 
 	def exists(self, username:str) -> bool:
-		query = "SELECT * FROM User WHERE %s = ?;"
-		data = Executor.execute_select( query, ("username",), (username,) )
-		return bool(data)
+		return Executor.exists("User", "username", username)
 
 	def remove(self, id:str) -> bool:
 		query = "DELETE FROM User WHERE id = ?;"
@@ -68,22 +66,49 @@ class Sale:
 	def __init__(self):
 		pass
 
-	def create(self, user_id:int, product_id:int, price:int, date):
-		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ?);"
-		return Executor.execute(
+	def add(self, user_id:int, product_id:int):
+		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ? );"
+		try:
+			product_price = Executor.execute_select(
+				"SELECT %s FROM Product WHERE %s = ?;",
+				("price", "id"),
+				(product_id, )
+			)[0]
+		except:
+			return False
+		result = Executor.execute(
 			query,
-			("user_id","product_id", "price", "date"),
-			(user_id,product_id,price,date)
-			)
+			("user_id", "product_id", "price", "date"),
+			(user_id, product_id, product_price, "datetime()")
+		)
+		return result
 
 
 class Product:
 	def __init__(self):
 		pass
 
-	def add(self, name:str, price:int, brand:int) -> bool:
-		query = "INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);"
-		return Executor.execute( query,("name", "price", "brand_id"), (name, price, brand) )
+	def add(self, name:str, price:float, brand:str) -> bool:
+		if not Executor.exists("Brand", "name", brand):
+			Executor.execute(
+				"INSERT INTO Brand (%s) VALUES(?);",
+				("name", ),
+				(brand, )
+			)
+
+		brand_id = Executor.execute_select(
+			"SELECT %s FROM Brand WHERE %s = ?",
+			("id", "name"),
+			(brand, )
+		)[0][0]
+
+		result = Executor.execute(
+			"INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);",
+			("name", "price", "brand_id"),
+			(name, price, brand_id)
+		)
+
+		return result
 
 	def remove(self, name:str) -> bool:
 		query = "DELETE FROM Product WHERE name = ?;"
@@ -96,6 +121,12 @@ class Product:
 class Brand:
 	def __init__(self):
 		pass
+
+	@staticmethod
+	def exists(name:str) -> bool:
+		query = "SELECT * FROM Brand WHERE %s = ?;"
+		data = Executor.execute_select( query, ("name",), (name,) )
+		return bool(data)
 
 	def add(self, name:str) -> bool:
 		query = "INSERT INTO Brand (%s) VALUES(?);"

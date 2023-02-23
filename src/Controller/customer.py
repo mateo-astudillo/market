@@ -14,9 +14,13 @@ class CartController(Controller):
 	def __init__(self):
 		super().__init__()
 
-	def create_sale(self, product_id:int, price:int, date):
-		user_id = self.model.user.id[0]
-		self.model.sale.create(user_id, product_id, price, date)
+	def add(self, product_id:int):
+		user_id = self.model.user.id
+		if not self.model.sale.add(user_id, product_id):
+			print("There are no products in the cart, crazy man")
+			return False
+		print("Product added")
+		return True
 
 
 class ProfileController(Controller):

@@ -10,8 +10,9 @@ class AddController(Controller):
 	def __init__(self):
 		super().__init__()
 
-	def add_product(self, name:str, price:int, brand:int):
-		self.model.product.add(name,price,brand)
+	def add_product(self, name:str, price:float, brand:str):
+		price = float(price)
+		self.model.product.add(name, price, brand)
 
 	def add_brand(self, name:str):
 		self.model.brand.add(name)

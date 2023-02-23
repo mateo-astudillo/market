@@ -53,4 +53,11 @@ class Executor:
 			connection.close()
 		return result
 
+	@staticmethod
+	def exists(table:str, column:str, value:str) -> bool:
+		query = "SELECT * FROM %s WHERE %s = ?;"
+		data = Executor.execute_select( query, (table, column), (value, ) )
+		return bool(data)
+
+
 
