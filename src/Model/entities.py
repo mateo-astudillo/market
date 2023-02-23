@@ -57,7 +57,7 @@ class User:
 			return False
 		return bool(data)
 
-	def get_data(self, id):
+	def get_user(self, id):
 		try:
 			user = Executor.execute_select(
 				"SELECT %s, %s, %s, %s FROM User WHERE %s = ?",
