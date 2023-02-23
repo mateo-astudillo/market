@@ -45,6 +45,6 @@ if __name__  == "__main__":
 	#app.controllers.get("register").register("juan","hola")
 	app.controllers.get("login").login("juan", "hola")
 	#app.controllers.get("add").add_product("Arbejas", 120, "Del Sur")
-	app.controllers.get("profile").get_data()
+	app.controllers.get("profile").get_user()
 
 

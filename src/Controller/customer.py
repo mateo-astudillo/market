@@ -49,7 +49,7 @@ class ProfileController(Controller):
 
 	def get_user(self) -> dict:
 		id = self.model.user.id
-		username, name, surname, age = self.model.user.get_data(id)
+		username, name, surname, age = self.model.user.get_user(id)
 		user = {
 			"username": username,
 			"name": name,
