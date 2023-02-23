@@ -76,7 +76,6 @@ class Product:
 		query = "INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);"
 		return Executor.execute( query,("name", "price", "brand_id"), (name, price, brand) )
 
-
 	def remove(self, name:str) -> bool:
 		query = "DELETE FROM Product WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
@@ -96,3 +95,7 @@ class Brand:
 	def remove(self, name:str) -> bool:
 		query = "DELETE FROM Brand WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
+
+	def edit(self, id:str, column:str, value:str) -> bool:
+		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, (column, "id"), (value,id) )
