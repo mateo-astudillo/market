@@ -19,7 +19,7 @@ class Model:
 			"""
 			CREATE TABLE IF NOT EXISTS User (
 				id integer PRIMARY KEY NOT NULL,
-				username varchar NOT NULL,
+				username varchar NOT NULL UNIQUE,
 				password varchar NOT NULL,
 				name varchar,
 				surname varchar,
@@ -31,7 +31,7 @@ class Model:
 			"""
 			CREATE TABLE IF NOT EXISTS Product (
 				id integer PRIMARY KEY NOT NULL,
-				name varchar NOT NULL,
+				name varchar NOT NULL UNIQUE,
 				price float DEFAULT 0 NOT NULL,
 				brand_id integer NOT NULL
 			);
@@ -50,7 +50,7 @@ class Model:
 			"""
 			CREATE TABLE IF NOT EXISTS Brand (
 				id integer PRIMARY KEY NOT NULL,
-				name varchar NOT NULL
+				name varchar NOT NULL UNIQUE
 			);
 			"""
 		]
