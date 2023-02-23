@@ -12,26 +12,15 @@ class User:
 	def __init__(self):
 		self.id = None
 
-
 	def set_id(self, username:str) -> bool:
-		query = "SELECT id From User Where username = ?;"
-		connection = connect(DATABASE)
-		cursor = connection.cursor()
-		cursor.execute( query, (username,) )
-		id = cursor.fetchone()
-		connection.commit()
-		connection.close()
+		query = "SELECT %s From User Where %s = ?;"
+		id = Executor.execute_select( query, ("id", "username"), (username,) )
 		self.id = id[0]
 		return bool(id)
 
 	def exists(self, username:str) -> bool:
-		query = "SELECT * FROM User WHERE username = ?;"
-		connection = connect(DATABASE)
-		cursor = connection.cursor()
-		cursor.execute( query, (username,) )
-		data = cursor.fetchone()
-		connection.commit()
-		connection.close()
+		query = "SELECT * FROM User WHERE %s = ?;"
+		data = Executor.execute_select( query, ("username",), (username,) )
 		return bool(data)
 
 	def remove(self, id:str) -> bool:
@@ -75,18 +64,43 @@ class Sale:
 	def __init__(self):
 		pass
 
-	def create(self, user_id, product_id, price, date):
-		pass
+	def create(self, user_id:int, product_id:int, price:int, date):
+		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ?);"
+		return Executor.execute(
+			query,
+			("user_id","product_id", "price", "date"),
+			(user_id,product_id,price,date)
+			)
 
 
 class Product:
 	def __init__(self):
 		pass
-	def add(self, name, price, brand) -> bool:
+
+	def add(self, name:str, price:int, brand:int) -> bool:
+		query = "INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);"
+		return Executor.execute( query,("name", "price", "brand_id"), (name, price, brand) )
+
+	def remove(self, name:str) -> bool:
+		query = "DELETE FROM Product WHERE name = ?;"
+		return Executor.execute_delete( query, (name, ) )
+
+	def edit(self, id:str, column:str, value:str) -> bool:
+		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, (column, "id"), (value,id) )
+
+class Brand:
+	def __init__(self):
 		pass
 
-	def remove(self, name) -> bool:
-		pass
+	def add(self, name:str) -> bool:
+		query = "INSERT INTO Brand (%s) VALUES(?);"
+		return Executor.execute( query, ("name",), (name,) )
 
-	def edit(self, column, value) -> bool:
-		pass
+	def remove(self, name:str) -> bool:
+		query = "DELETE FROM Brand WHERE name = ?;"
+		return Executor.execute_delete( query, (name, ) )
+
+	def edit(self, id:str, column:str, value:str) -> bool:
+		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, (column, "id"), (value,id) )

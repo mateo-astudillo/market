@@ -2,7 +2,7 @@ from sqlite3 import connect
 from os import getenv
 from dotenv import load_dotenv
 
-from .entities import User, Sale, Product
+from .entities import User, Sale, Product, Brand
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
@@ -13,6 +13,7 @@ class Model:
 		self.user = User()
 		self.sale = Sale()
 		self.product = Product()
+		self.brand = Brand()
 
 	def init_database(self):
 		queries = [
