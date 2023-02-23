@@ -48,5 +48,6 @@ if __name__  == "__main__":
 	#app.controllers.get("add").add_brand("hellman")
 	#app.controllers.get("add").add_product("cafe",300,"2")
 	#app.controllers.get("edit").remove_brand("hellman")
-	app.controllers.get("edit").edit_brand("2","name","nestle")
+	#app.controllers.get("edit").edit_brand("2","name","nestle")
+	app.controllers.get("cart").create_sale(2,300,"10-12")
 

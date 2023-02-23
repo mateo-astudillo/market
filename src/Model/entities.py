@@ -64,8 +64,13 @@ class Sale:
 	def __init__(self):
 		pass
 
-	def create(self, user_id, product_id, price, date):
-		pass
+	def create(self, user_id:int, product_id:int, price:int, date):
+		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ?);"
+		return Executor.execute(
+			query,
+			("user_id","product_id", "price", "date"),
+			(user_id,product_id,price,date)
+			)
 
 
 class Product:
