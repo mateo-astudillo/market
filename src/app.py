@@ -43,7 +43,7 @@ if __name__  == "__main__":
 	app = App(root)
 	app.views.get("profile").show()
 	app.model.init_database()
-	app.controllers.get("register").register("juan","hola")
 	root.mainloop()
+
 
 

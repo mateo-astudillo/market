@@ -17,7 +17,7 @@ class User:
 		query = "SELECT %s From User Where %s = ?;"
 		id = Executor.execute_select( query, ("id", "username"), (username,) )
 		try:
-			self.id = int(id[0])
+			self.id = int(id[0][0])
 		except:
 			return False
 		return True
@@ -56,6 +56,17 @@ class User:
 		except Exception:
 			return False
 		return bool(data)
+
+	def get_data(self, id):
+		try:
+			user = Executor.execute_select(
+				"SELECT %s, %s, %s, %s FROM User WHERE %s = ?",
+				("username", "name", "surname", "age", "id"),
+				(id,)
+			)[0]
+		except:
+			return None
+		return user
 
 	def hash(self, password:str) -> str:
 		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
