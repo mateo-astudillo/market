@@ -2,7 +2,7 @@ from sqlite3 import connect
 from passlib.hash import sha256_crypt as sha
 from os import getenv
 from dotenv import load_dotenv
-
+from .executor import Executor
 load_dotenv()
 DATABASE = getenv("DATABASE")
 SALT = getenv("SALT")
@@ -10,69 +10,65 @@ SALT = getenv("SALT")
 
 class User:
 	def __init__(self):
-		pass
+		self.id = None
+
+
+	def set_id(self, username:str) -> bool:
+		query = "SELECT id From User Where username = ?;"
+		connection = connect(DATABASE)
+		cursor = connection.cursor()
+		cursor.execute( query, (username,) )
+		id = cursor.fetchone()
+		connection.commit()
+		connection.close()
+		self.id = id[0]
+		return bool(id)
 
 	def exists(self, username:str) -> bool:
-		query = "SELECT * FROM User WHERE username = (?);"
-		connetion = connect(DATABASE)
-		cursor = connetion.cursor()
+		query = "SELECT * FROM User WHERE username = ?;"
+		connection = connect(DATABASE)
+		cursor = connection.cursor()
 		cursor.execute( query, (username,) )
 		data = cursor.fetchone()
-		connetion.commit()
-		connetion.close()
+		connection.commit()
+		connection.close()
 		return bool(data)
 
-	def remove(self, username) -> bool:
-		query = "DELETE FROM User WHERE username = ?;"
-		try:
-			connetion = connect(DATABASE)
-			cursor = connetion.cursor()
-			cursor.execute(query, (username,) )
-			connetion.commit()
-			result = True
-		except Exception as ex:
-			print(ex)
-			result = False
-		connetion.close()
-		return result
+	def remove(self, id:str) -> bool:
+		query = "DELETE FROM User WHERE id = ?;"
+		return Executor.execute_delete( query, (id, ) )
 
-	def edit(self, username, column, value) -> bool:
-		pass
+	def set_data(self, id:str, column:str, value:str) -> bool:
+		query = "UPDATE User SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, (column, "id"), (value, id) )
 
-	def change_username(self, username, password, new_username) -> bool:
-		pass
+	def change_username(self, id:str, username:str) -> bool:
+		query = "UPDATE User SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, ("username", "id"), (username, id) )
 
-	def change_password(self, username, password, new_password) -> bool:
-		pass
-
-	def register(self, username, password) -> bool:
+	def change_password(self, id:str, password:str) -> bool:
 		password = self.hash(password)
-		query = "INSERT INTO User (username, password) VALUES(?, ?);"
-		try:
-			connetion = connect(DATABASE)
-			cursor = connetion.cursor()
-			cursor.execute( query, (username, password) )
-			connetion.commit()
-			result = True
-		except Exception as ex:
-			print(ex)
-			result = False
-		connetion.close()
-		return result
+		query = "UPDATE User SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, ("password", "id"), (password, id) )
 
-	def login(self, username, password) -> bool:
+	def register(self, username:str, password:str) -> bool:
 		password = self.hash(password)
-		query = "SELECT * FROM User WHERE username = (?) and password = (?);"
-		connetion = connect(DATABASE)
-		cursor = connetion.cursor()
-		cursor.execute( query, (username, password) )
-		data = cursor.fetchone()
-		connetion.commit()
-		connetion.close()
+		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
+		return Executor.execute( query, ("username","password"), (username, password) )
+
+	def login(self, username:str, password:str) -> bool:
+		password = self.hash(password)
+		query = "SELECT * FROM User WHERE %s = ? and %s = ?;"
+		data = Executor.execute_select( query, ("username","password"), (username, password))
+		try:
+			data = data[0]
+		except Exception:
+			return False
 		return bool(data)
 
 	def hash(self, password:str) -> str:
 		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
+
 
 
 class Sale:

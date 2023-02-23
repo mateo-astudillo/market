@@ -1,7 +1,7 @@
 from re import match
 from .controller import Controller
 
-def validate_username(username):
+def validate_username(username) -> bool:
 	username = username.replace(" ", "").replace("\n", "")
 	if match('^[a-zA-Z0-9._]*$', username) is None:
 		return False
@@ -19,7 +19,7 @@ class LoginController(Controller):
 		if not self.model.user.login(username, password):
 			print("incorrect username or password")
 			return False
-
+		self.model.user.set_id(username)
 		print("logged: ", username, " ", password)
 		return True
 
@@ -36,7 +36,7 @@ class RegisterController(Controller):
 			print("invalid username")
 			return False
 		if self.model.user.exists(username):
-			print("username already exists")
+			print("Username already exists")
 			return False
 		if not self.model.user.register(username, password):
 			print("Error in database")
