@@ -3,6 +3,7 @@ from passlib.hash import sha256_crypt as sha
 from os import getenv
 from dotenv import load_dotenv
 from .executor import Executor
+
 load_dotenv()
 DATABASE = getenv("DATABASE")
 SALT = getenv("SALT")
@@ -10,13 +11,16 @@ SALT = getenv("SALT")
 
 class User:
 	def __init__(self):
-		self.id = None
+		self.id:int = None
 
 	def set_id(self, username:str) -> bool:
 		query = "SELECT %s From User Where %s = ?;"
 		id = Executor.execute_select( query, ("id", "username"), (username,) )
-		self.id = id[0]
-		return bool(id)
+		try:
+			self.id = int(id[0])
+		except:
+			return False
+		return True
 
 	def exists(self, username:str) -> bool:
 		query = "SELECT * FROM User WHERE %s = ?;"
@@ -31,7 +35,7 @@ class User:
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value, id) )
 
-	def change_username(self, id:str, username:str) -> bool:
+	def change_username(self, id:int, username:str) -> bool:
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, ("username", "id"), (username, id) )
 
