@@ -81,8 +81,9 @@ class Product:
 		query = "DELETE FROM Product WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
 
-	def edit(self, column, value) -> bool:
-		pass
+	def edit(self, id:str, column:str, value:str) -> bool:
+		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
+		return Executor.execute( query, (column, "id"), (value,id) )
 
 class Brand:
 	def __init__(self):

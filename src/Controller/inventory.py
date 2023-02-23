@@ -25,5 +25,11 @@ class EditController(Controller):
 	def remove_product(self, name:str):
 		self.model.product.remove(name)
 
+	def edit_product(self, id:str, column:str, value):
+		self.model.product.edit(id, column, value)
+
 	def remove_brand(self, name:str):
 		self.model.brand.remove(name)
+
+	def edit_brand(self,name:str):
+		pass
