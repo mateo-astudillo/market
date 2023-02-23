@@ -91,3 +91,7 @@ class Brand:
 	def add(self, name:str) -> bool:
 		query = "INSERT INTO Brand (%s) VALUES(?);"
 		return Executor.execute( query, ("name",), (name,) )
+
+	def remove(self, name:str) -> bool:
+		query = "DELETE FROM Brand WHERE name = ?;"
+		return Executor.execute_delete( query, (name, ) )
