@@ -23,8 +23,8 @@ class EditController(Controller):
 	def __init__(self):
 		super().__init__()
 
-	def remove_product(self, name:str):
-		self.model.product.remove(name)
+	def remove_product(self, name:str, brand:str):
+		self.model.product.remove(name, brand)
 
 	def edit_product(self, id:str, column:str, value):
 		self.model.product.edit(id, column, value)

@@ -88,31 +88,48 @@ class Product:
 	def __init__(self):
 		pass
 
+	@staticmethod
+	def exist(name:str):
+		return Executor.exists("Product", "name", name)
+
 	def add(self, name:str, price:float, brand:str) -> bool:
 		if not Executor.exists("Brand", "name", brand):
-			Executor.execute(
-				"INSERT INTO Brand (%s) VALUES(?);",
-				("name", ),
-				(brand, )
-			)
+			Brand.add(brand)
+		brand_id = Brand.get_id(brand)
 
-		brand_id = Executor.execute_select(
-			"SELECT %s FROM Brand WHERE %s = ?",
-			("id", "name"),
-			(brand, )
-		)[0][0]
+		if Product.exist(name):
+			try:
+				Executor.execute_select(
+					"SELECT * FROM Product WHERE %s = ? and %s = ?;",
+					("name", "brand_id"),
+					(name, brand_id)
+				)[0]
+				return False
+			except:
+				pass
 
 		result = Executor.execute(
-			"INSERT INTO Product (%s, %s, %s) VALUES(?, ?, ?);",
-			("name", "price", "brand_id"),
-			(name, price, brand_id)
+			"INSERT INTO Product (%s, %s) VALUES(?, ?);",
+			("name", "brand_id"),
+			(name, brand_id)
 		)
-
+		Product.set_price(name, brand, price)
 		return result
 
-	def remove(self, name:str) -> bool:
-		query = "DELETE FROM Product WHERE name = ?;"
-		return Executor.execute_delete( query, (name, ) )
+	@staticmethod
+	def set_price(name:str, brand:str, price:float):
+		brand_id = Brand.get_id(brand)
+		result = Executor.execute(
+			"UPDATE Product SET %s = ? WHERE %s = ? and %s = ?;",
+			("price", "name", "brand_id"),
+			(price, name, brand_id)
+		)
+		return result
+
+	def remove(self, name:str, brand:str) -> bool:
+		query = "DELETE FROM Product WHERE name = ? and brand_id = ?;"
+		brand_id = Brand.get_id(brand)
+		return Executor.execute_delete( query, (name, brand_id) )
 
 	def edit(self, id:str, column:str, value:str) -> bool:
 		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
@@ -122,15 +139,25 @@ class Brand:
 	def __init__(self):
 		pass
 
-	@staticmethod
-	def exists(name:str) -> bool:
-		query = "SELECT * FROM Brand WHERE %s = ?;"
-		data = Executor.execute_select( query, ("name",), (name,) )
-		return bool(data)
+	def exists(self, name:str) -> bool:
+		return Executor.exists("Brand", "name", name)
 
-	def add(self, name:str) -> bool:
+	@staticmethod
+	def add(name:str) -> bool:
 		query = "INSERT INTO Brand (%s) VALUES(?);"
 		return Executor.execute( query, ("name",), (name,) )
+
+	@staticmethod
+	def get_id(name:str) -> int:
+		try:
+			id = Executor.execute_select(
+				"SELECT %s FROM Brand WHERE %s = ?",
+				("id", "name"),
+				(name, )
+			)[0][0]
+		except:
+			return None
+		return id
 
 	def remove(self, name:str) -> bool:
 		query = "DELETE FROM Brand WHERE name = ?;"

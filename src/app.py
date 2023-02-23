@@ -42,12 +42,9 @@ if __name__  == "__main__":
 	app = App()
 	print("Start")
 	app.model.init_database()
-	app.controllers.get("register").register("juan","hola")
+	#app.controllers.get("register").register("juan","hola")
 	app.controllers.get("login").login("juan", "hola")
-	# app.controllers.get("profile").change_username("pepe")
-	# app.controllers.get("add").add_brand("hellman")
-	app.controllers.get("add").add_product("mayonesa", 200,"natura")
-	# app.controllers.get("edit").remove_brand("hellman")
-	# app.controllers.get("edit").edit_brand("2","name","nestle")
-	# app.controllers.get("cart").add(1)
+	#app.controllers.get("add").add_product("Arbejas", 120, "Del Sur")
+	app.controllers.get("edit").remove_brand("Marolio")
+
 

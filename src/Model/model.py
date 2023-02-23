@@ -32,8 +32,8 @@ class Model:
 			"""
 			CREATE TABLE IF NOT EXISTS Product (
 				id integer PRIMARY KEY NOT NULL,
-				name varchar NOT NULL UNIQUE,
-				price float DEFAULT 0 NOT NULL,
+				name varchar NOT NULL,
+				price float DEFAULT 0,
 				brand_id integer NOT NULL
 			);
 			""",
@@ -44,7 +44,7 @@ class Model:
 				user_id integer NOT NULL,
 				product_id integer NOT NULL,
 				date datetime,
-				price float DEFAULT 0
+				price float
 			);
 			""",
 
@@ -52,6 +52,15 @@ class Model:
 			CREATE TABLE IF NOT EXISTS Brand (
 				id integer PRIMARY KEY NOT NULL,
 				name varchar NOT NULL UNIQUE
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Cart (
+				id integer PRIMARY KEY NOT NULL,
+				user_id integer NOT NULL UNIQUE,
+				product_id integer NOT NULL UNIQUE,
+				amount varchar NOT NULL DEFAULT 1
 			);
 			"""
 		]
