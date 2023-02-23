@@ -25,13 +25,8 @@ class User:
 		return bool(id)
 
 	def exists(self, username:str) -> bool:
-		query = "SELECT * FROM User WHERE username = ?;"
-		connection = connect(DATABASE)
-		cursor = connection.cursor()
-		cursor.execute( query, (username,) )
-		data = cursor.fetchone()
-		connection.commit()
-		connection.close()
+		query = "SELECT * FROM User WHERE %s = ?;"
+		data = Executor.execute_select( query, ("username",), (username,) )[0]
 		return bool(data)
 
 	def remove(self, id:str) -> bool:
