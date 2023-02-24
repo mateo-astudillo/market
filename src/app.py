@@ -41,6 +41,7 @@ class App:
 if __name__  == "__main__":
 	root = CTk()
 	app = App(root)
+	app.controllers.get("login").login("juan","hola")
 	app.views.get("profile").show()
 	app.model.init_database()
 	root.mainloop()

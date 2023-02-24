@@ -1,5 +1,5 @@
 from .view import View
-from customtkinter import CTkButton, CTkLabel, CTkEntry, CTkFrame
+from customtkinter import CTkButton, CTkLabel, CTkEntry, CTkFrame, StringVar
 
 class Menu(View):
 	def __init__(self):
@@ -23,12 +23,18 @@ class Profile(View):
 		self.edit_fr = CTkFrame(master=root)
 		self.state = False
 
+		self.variables = {
+			"username": StringVar(),
+			"name": StringVar(),
+			"surname": StringVar(),
+			"age": StringVar(),
+		}
 		self.entries = {
-			"username": CTkEntry(self.frame),
+			"username": CTkEntry(self.frame, textvariable=self.variables.get("username")),
 			"password": CTkEntry(self.frame, show="*"),
-			"name": CTkEntry(self.frame),
-			"surname": CTkEntry(self.frame),
-			"age": CTkEntry(self.frame)
+			"name": CTkEntry(self.frame, textvariable=self.variables.get("name")),
+			"surname": CTkEntry(self.frame, textvariable=self.variables.get("surname")),
+			"age": CTkEntry(self.frame, textvariable=self.variables.get("age"))
 		}
 		self.set_state()
 
@@ -37,6 +43,7 @@ class Profile(View):
 
 	def show(self):
 		self.frame.pack()
+		self.set_placeholder()
 		self.pack_widgets()
 
 	def set_state(self):
@@ -58,6 +65,10 @@ class Profile(View):
 		self.btn_save.pack_forget()
 		self.btn_edit.pack()
 
+	def set_placeholder(self):
+		user = self.controller.get_user()
+		for key,var in self.variables.items():
+			var.set(user.get(key))
 
 	def pack_widgets(self):
 		for entry in self.entries.values():
