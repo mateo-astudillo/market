@@ -3,8 +3,7 @@ from passlib.hash import sha256_crypt as sha
 from os import getenv
 from dotenv import load_dotenv
 
-from .executor import Executor
-from .model import Encrypter
+from .utilities import Executor, Encrypter
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
@@ -12,15 +11,16 @@ SALT = getenv("SALT")
 
 
 class User:
+
 	@staticmethod
-	def set_id(username:str) -> bool:
+	def get_id(username:str) -> int:
 		query = "SELECT %s From User Where %s = ?;"
 		id = Executor.execute_select( query, ("id", "username"), (username,) )
 		try:
 			id = int(id[0][0])
 		except:
-			return False
-		return True
+			return None
+		return id
 
 	@staticmethod
 	def exists(username:str) -> bool:
@@ -43,19 +43,19 @@ class User:
 
 	@staticmethod
 	def change_password(id:str, password:str) -> bool:
-		password = User.hash(password)
+		password = Encrypter.hash(password)
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, ("password", "id"), (password, id) )
 
 	@staticmethod
 	def register(username:str, password:str) -> bool:
-		password = User.hash(password)
+		password = Encrypter.hash(password)
 		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
 		return Executor.execute( query, ("username","password"), (username, password) )
 
 	@staticmethod
 	def login(username:str, password:str) -> bool:
-		password = User.hash(password)
+		password = Encrypter.hash(password)
 		query = "SELECT * FROM User WHERE %s = ? and %s = ?;"
 		data = Executor.execute_select( query, ("username","password"), (username, password))
 		try:

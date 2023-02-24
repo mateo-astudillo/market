@@ -13,8 +13,10 @@ class Model:
 	def set_controller(self, controller):
 		self.controller = controller
 
+class Database:
+
 	@staticmethod
-	def init_database():
+	def create():
 		queries = [
 			"""
 			CREATE TABLE IF NOT EXISTS User (
