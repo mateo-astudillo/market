@@ -2,7 +2,9 @@ from sqlite3 import connect
 from passlib.hash import sha256_crypt as sha
 from os import getenv
 from dotenv import load_dotenv
+
 from .executor import Executor
+from .model import Encrypter
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
@@ -10,45 +12,50 @@ SALT = getenv("SALT")
 
 
 class User:
-	def __init__(self):
-		self.id:int = None
-
-	def set_id(self, username:str) -> bool:
+	@staticmethod
+	def set_id(username:str) -> bool:
 		query = "SELECT %s From User Where %s = ?;"
 		id = Executor.execute_select( query, ("id", "username"), (username,) )
 		try:
-			self.id = int(id[0][0])
+			id = int(id[0][0])
 		except:
 			return False
 		return True
 
-	def exists(self, username:str) -> bool:
+	@staticmethod
+	def exists(username:str) -> bool:
 		return Executor.exists("User", "username", username)
 
-	def remove(self, id:str) -> bool:
+	@staticmethod
+	def remove(id:str) -> bool:
 		query = "DELETE FROM User WHERE id = ?;"
 		return Executor.execute_delete( query, (id, ) )
 
-	def set_data(self, id:str, column:str, value:str) -> bool:
+	@staticmethod
+	def set_data(id:str, column:str, value:str) -> bool:
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value, id) )
 
-	def change_username(self, id:int, username:str) -> bool:
+	@staticmethod
+	def change_username(id:int, username:str) -> bool:
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, ("username", "id"), (username, id) )
 
-	def change_password(self, id:str, password:str) -> bool:
-		password = self.hash(password)
+	@staticmethod
+	def change_password(id:str, password:str) -> bool:
+		password = User.hash(password)
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, ("password", "id"), (password, id) )
 
-	def register(self, username:str, password:str) -> bool:
-		password = self.hash(password)
+	@staticmethod
+	def register(username:str, password:str) -> bool:
+		password = User.hash(password)
 		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
 		return Executor.execute( query, ("username","password"), (username, password) )
 
-	def login(self, username:str, password:str) -> bool:
-		password = self.hash(password)
+	@staticmethod
+	def login(username:str, password:str) -> bool:
+		password = User.hash(password)
 		query = "SELECT * FROM User WHERE %s = ? and %s = ?;"
 		data = Executor.execute_select( query, ("username","password"), (username, password))
 		try:
@@ -57,7 +64,8 @@ class User:
 			return False
 		return bool(data)
 
-	def get_user(self, id):
+	@staticmethod
+	def get_user(id):
 		try:
 			user = Executor.execute_select(
 				"SELECT %s, %s, %s, %s FROM User WHERE %s = ?",
@@ -67,10 +75,6 @@ class User:
 		except:
 			return None
 		return user
-
-	def hash(self, password:str) -> str:
-		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
-
 
 
 class Sale:

@@ -1,50 +1,24 @@
-from Controller import *
-from View import *
+from Controller import Controller
+from View import View
 from Model import Model
 
 
 class App:
 	def __init__(self):
+		self.view =  View()
 		self.model = Model()
+		self.controller = Controller(self.view, self.model)
 
-		self.views = {
-			"login": Login(),
-			"register": Register(),
-			"menu": Menu(),
-			"shop": Shop(),
-			"cart": Cart(),
-			"profile": Profile(),
-			"options": Options(),
-			"add": Add(),
-			"edit": Edit(),
-		}
+		self.view.set_controller(self.controller)
+		self.model.set_controller(self.controller)
 
-		self.controllers = {
-			"login": LoginController(),
-			"register": RegisterController(),
-			"menu": MenuController(),
-			"shop": ShopController(),
-			"cart": CartController(),
-			"profile": ProfileController(),
-			"options": OptionsController(),
-			"add": AddController(),
-			"edit": EditController(),
-		}
-
-		for view, controller in self.controllers.items():
-			controller.set_view(self.views.get(view))
-			controller.set_model(self.model)
-
-		for controller, view in self.views.items():
-			view.set_controller(self.controllers.get(controller))
+	def run(self):
+		self.controller.run()
 
 if __name__  == "__main__":
 	app = App()
+	app.run()
 	print("Start")
-	app.model.init_database()
-	#app.controllers.get("register").register("juan","hola")
-	app.controllers.get("login").login("juan", "hola")
-	#app.controllers.get("add").add_product("Arbejas", 120, "Del Sur")
-	app.controllers.get("profile").get_user()
+
 
 

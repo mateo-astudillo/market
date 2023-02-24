@@ -1,10 +1,20 @@
-from .view import View
+from Controller import LoginController, RegisterController
 
-class Login(View):
+class Login:
 	def __init__(self):
-		super().__init__()
+		self.controller = LoginController
+		pass
+
+	def show(self):
+		pass
+
+	def login(self):
+		LoginController.login()
 
 
-class Register(View):
+class Register:
 	def __init__(self):
-		super().__init__()
+		pass
+
+	def show(self):
+		pass

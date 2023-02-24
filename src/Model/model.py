@@ -2,20 +2,19 @@ from sqlite3 import connect
 from os import getenv
 from dotenv import load_dotenv
 
-from .entities import User, Sale, Product, Brand
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
 
 class Model:
 	def __init__(self):
+		self.controller = None
 
-		self.user = User()
-		self.sale = Sale()
-		self.product = Product()
-		self.brand = Brand()
+	def set_controller(self, controller):
+		self.controller = controller
 
-	def init_database(self):
+	@staticmethod
+	def init_database():
 		queries = [
 			"""
 			CREATE TABLE IF NOT EXISTS User (

@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
+SALT = getenv("SALT")
 
 
 class Executor:
@@ -60,4 +61,8 @@ class Executor:
 		return bool(data)
 
 
-
+class Encrypter:
+	@staticmethod
+	def hash(password:str) -> str:
+		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
+	
