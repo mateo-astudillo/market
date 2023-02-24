@@ -14,6 +14,14 @@ class CartController(Controller):
 	def __init__(self):
 		super().__init__()
 
+	def add(self, product_id:int):
+		user_id = self.model.user.id
+		if not self.model.sale.add(user_id, product_id):
+			print("There are no products in the cart, crazy man")
+			return False
+		print("Product added")
+		return True
+
 
 class ProfileController(Controller):
 	def __init__(self):
@@ -38,3 +46,14 @@ class ProfileController(Controller):
 	def change_password(self, password):
 		id = self.model.user.id
 		self.model.user.change_password(id, password)
+
+	def get_user(self) -> dict:
+		id = self.model.user.id
+		username, name, surname, age = self.model.user.get_user(id)
+		user = {
+			"username": username,
+			"name": name,
+			"surname": surname,
+			"age": age,
+		}
+		return user
