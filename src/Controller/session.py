@@ -1,13 +1,11 @@
-from re import match
-from Model import User
-from Model import Validator
+from Model import User, Validator
 
 
 class LoginController:
 
 	@staticmethod
-	def login(self, username, password):
-		if not validate_username(username):
+	def login(username, password):
+		if not Validator.username(username):
 			print("invalid username")
 			return False
 		if not User.login(username, password):

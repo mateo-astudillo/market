@@ -1,4 +1,4 @@
-from Model import User
+from Model import User, Database
 
 
 class Controller:
@@ -7,13 +7,20 @@ class Controller:
 		self.model = model
 
 		self.admin = False
-		self.logged = False
+		self.user_logged = False
 		self.user_id = None
 
+		self.current = None
+
+	def run(self):
+		if not self.model.database:
+			self.model.database = Database.create()
+		self.go("login")
+
 	def logged(self, username):
-		self.logged = True
+		self.user_logged = True
 		self.user_id = User.get_id(username)
-		self.view.go("shop")
+		# self.view.go("shop")
 
 	def go(self, page):
 		if page in ["login", "register"]:
@@ -22,6 +29,5 @@ class Controller:
 			self.view.go(page)
 		elif self.admin and page in ["options", "add", "edit"]:
 			self.view.go(page)
-
-	def run(self):
-		self.view.go("login")
+		else:
+			print("Page not exists")

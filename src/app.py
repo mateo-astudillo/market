@@ -16,9 +16,9 @@ class App:
 		self.controller.run()
 
 if __name__  == "__main__":
+	print("Start")
 	app = App()
 	app.run()
-	print("Start")
 
 
 

@@ -1,6 +1,8 @@
 from sqlite3 import connect
 from os import getenv
 from dotenv import load_dotenv
+from re import match
+from passlib.hash import sha256_crypt as sha
 
 load_dotenv()
 DATABASE = getenv("DATABASE")

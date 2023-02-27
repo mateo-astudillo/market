@@ -1,5 +1,4 @@
 from sqlite3 import connect
-from passlib.hash import sha256_crypt as sha
 from os import getenv
 from dotenv import load_dotenv
 
@@ -181,3 +180,71 @@ class Brand:
 	def edit(self, id:str, column:str, value:str) -> bool:
 		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
+
+
+class Database:
+
+	@staticmethod
+	def create():
+		queries = [
+			"""
+			CREATE TABLE IF NOT EXISTS User (
+				id integer PRIMARY KEY NOT NULL,
+				username varchar NOT NULL UNIQUE,
+				password varchar NOT NULL,
+				name varchar,
+				surname varchar,
+				age integer,
+				credit float DEFAULT 0
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Product (
+				id integer PRIMARY KEY NOT NULL,
+				name varchar NOT NULL,
+				price float DEFAULT 0,
+				brand_id integer NOT NULL
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Sale (
+				id integer PRIMARY KEY NOT NULL,
+				user_id integer NOT NULL,
+				product_id integer NOT NULL,
+				date datetime,
+				price float
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Brand (
+				id integer PRIMARY KEY NOT NULL,
+				name varchar NOT NULL UNIQUE
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Cart (
+				id integer PRIMARY KEY NOT NULL,
+				user_id integer NOT NULL UNIQUE,
+				product_id integer NOT NULL UNIQUE,
+				amount varchar NOT NULL DEFAULT 1
+			);
+			"""
+		]
+		try:
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
+			for query in queries:
+				query = query.replace("\t", "").replace("\n", " ")
+				cursor.execute(query)
+			connection.commit()
+			result = True
+		except Exception as ex:
+			print(ex)
+			result = False
+		finally:
+			connection.close()
+		return result

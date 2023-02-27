@@ -1,21 +1,44 @@
-from .view import View
 
 
-class Menu(View):
-	def __init__(self):
-		super().__init__()
+class Menu:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Shop(View):
-	def __init__(self):
-		super().__init__()
+class Shop:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Cart(View):
-	def __init__(self):
-		super().__init__()
+class Cart:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Profile(View):
-	def __init__(self):
-		super().__init__()
+class Profile:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
