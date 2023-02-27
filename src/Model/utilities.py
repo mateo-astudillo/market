@@ -1,9 +1,12 @@
 from sqlite3 import connect
 from os import getenv
 from dotenv import load_dotenv
+from re import match
+from passlib.hash import sha256_crypt as sha
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
+SALT = getenv("SALT")
 
 
 class Executor:
@@ -60,4 +63,17 @@ class Executor:
 		return bool(data)
 
 
+class Encrypter:
 
+	@staticmethod
+	def hash(password:str) -> str:
+		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
+	
+class Validator:
+
+	@staticmethod
+	def username(username) -> bool:
+		username = username.replace(" ", "").replace("\n", "")
+		if match('^[a-zA-Z0-9._]*$', username) is None:
+			return False
+		return True

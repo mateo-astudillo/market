@@ -1,16 +1,33 @@
-from .view import View
 
 
-class Options(View):
-	def __init__(self):
-		super().__init__()
+class Options:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Add(View):
-	def __init__(self):
-		super().__init__()
+class Add:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Edit(View):
-	def __init__(self):
-		super().__init__()
+class Edit:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass

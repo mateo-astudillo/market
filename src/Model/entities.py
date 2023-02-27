@@ -1,8 +1,8 @@
 from sqlite3 import connect
-from passlib.hash import sha256_crypt as sha
 from os import getenv
 from dotenv import load_dotenv
-from .executor import Executor
+
+from .utilities import Executor, Encrypter
 
 load_dotenv()
 DATABASE = getenv("DATABASE")
@@ -10,45 +10,51 @@ SALT = getenv("SALT")
 
 
 class User:
-	def __init__(self):
-		self.id:int = None
 
-	def set_id(self, username:str) -> bool:
+	@staticmethod
+	def get_id(username:str) -> int:
 		query = "SELECT %s From User Where %s = ?;"
 		id = Executor.execute_select( query, ("id", "username"), (username,) )
 		try:
-			self.id = int(id[0][0])
+			id = int(id[0][0])
 		except:
-			return False
-		return True
+			return None
+		return id
 
-	def exists(self, username:str) -> bool:
+	@staticmethod
+	def exists(username:str) -> bool:
 		return Executor.exists("User", "username", username)
 
-	def remove(self, id:str) -> bool:
+	@staticmethod
+	def remove(id:str) -> bool:
 		query = "DELETE FROM User WHERE id = ?;"
 		return Executor.execute_delete( query, (id, ) )
 
-	def set_data(self, id:str, column:str, value:str) -> bool:
+	@staticmethod
+	def set_data(id:str, column:str, value:str) -> bool:
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value, id) )
 
-	def change_username(self, id:int, username:str) -> bool:
+	@staticmethod
+	def change_username(id:int, username:str) -> bool:
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, ("username", "id"), (username, id) )
 
-	def change_password(self, id:str, password:str) -> bool:
-		password = self.hash(password)
+	@staticmethod
+	def change_password(id:str, password:str) -> bool:
+		password = Encrypter.hash(password)
 		query = "UPDATE User SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, ("password", "id"), (password, id) )
 
-	def register(self, username:str, password:str) -> bool:
-		password = self.hash(password)
+	@staticmethod
+	def register(username:str, password:str) -> bool:
+		password = Encrypter.hash(password)
 		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
 		return Executor.execute( query, ("username","password"), (username, password) )
 
-	def login(self, username:str, password:str) -> bool:
-		password = self.hash(password)
+	@staticmethod
+	def login(username:str, password:str) -> bool:
+		password = Encrypter.hash(password)
 		query = "SELECT * FROM User WHERE %s = ? and %s = ?;"
 		data = Executor.execute_select( query, ("username","password"), (username, password))
 		try:
@@ -57,7 +63,8 @@ class User:
 			return False
 		return bool(data)
 
-	def get_user(self, id):
+	@staticmethod
+	def get_user(id):
 		try:
 			user = Executor.execute_select(
 				"SELECT %s, %s, %s, %s FROM User WHERE %s = ?",
@@ -67,10 +74,6 @@ class User:
 		except:
 			return None
 		return user
-
-	def hash(self, password:str) -> str:
-		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
-
 
 
 class Sale:
@@ -177,3 +180,71 @@ class Brand:
 	def edit(self, id:str, column:str, value:str) -> bool:
 		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
+
+
+class Database:
+
+	@staticmethod
+	def create():
+		queries = [
+			"""
+			CREATE TABLE IF NOT EXISTS User (
+				id integer PRIMARY KEY NOT NULL,
+				username varchar NOT NULL UNIQUE,
+				password varchar NOT NULL,
+				name varchar,
+				surname varchar,
+				age integer,
+				credit float DEFAULT 0
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Product (
+				id integer PRIMARY KEY NOT NULL,
+				name varchar NOT NULL,
+				price float DEFAULT 0,
+				brand_id integer NOT NULL
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Sale (
+				id integer PRIMARY KEY NOT NULL,
+				user_id integer NOT NULL,
+				product_id integer NOT NULL,
+				date datetime,
+				price float
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Brand (
+				id integer PRIMARY KEY NOT NULL,
+				name varchar NOT NULL UNIQUE
+			);
+			""",
+
+			"""
+			CREATE TABLE IF NOT EXISTS Cart (
+				id integer PRIMARY KEY NOT NULL,
+				user_id integer NOT NULL UNIQUE,
+				product_id integer NOT NULL UNIQUE,
+				amount varchar NOT NULL DEFAULT 1
+			);
+			"""
+		]
+		try:
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
+			for query in queries:
+				query = query.replace("\t", "").replace("\n", " ")
+				cursor.execute(query)
+			connection.commit()
+			result = True
+		except Exception as ex:
+			print(ex)
+			result = False
+		finally:
+			connection.close()
+		return result

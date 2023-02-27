@@ -1,27 +1,44 @@
-from .view import View
-from customtkinter import CTkButton, CTkLabel, CTkEntry, CTkFrame, StringVar
-
-class Menu(View):
-	def __init__(self):
-		super().__init__()
+from customtkinter import CTkFrame, CTkButton, CTkLabel, CTkEntry, CTkFrame, StringVar
 
 
-class Shop(View):
-	def __init__(self):
-		super().__init__()
+class Menu:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Cart(View):
-	def __init__(self):
-		super().__init__()
+class Shop:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
 
 
-class Profile(View):
-	def __init__(self, root):
-		super().__init__()
-		self.frame = CTkFrame(master=root)
-		self.edit_fr = CTkFrame(master=root)
-		self.state = False
+class Cart:
+	def __init__(self, view):
+		self.view = view
+
+	def show(self):
+		pass
+
+	def hide(self):
+		pass
+
+
+class Profile(CTkFrame):
+	def __init__(self, view):
+		super().__init__(view)
+
+		self.view = view
 
 		self.variables = {
 			"username": StringVar(),
@@ -30,21 +47,24 @@ class Profile(View):
 			"age": StringVar(),
 		}
 		self.entries = {
-			"username": CTkEntry(self.frame, textvariable=self.variables.get("username")),
-			"password": CTkEntry(self.frame, show="*"),
-			"name": CTkEntry(self.frame, textvariable=self.variables.get("name")),
-			"surname": CTkEntry(self.frame, textvariable=self.variables.get("surname")),
-			"age": CTkEntry(self.frame, textvariable=self.variables.get("age"))
+			"username": CTkEntry(self, textvariable=self.variables.get("username")),
+			"password": CTkEntry(self, show="*"),
+			"name": CTkEntry(self, textvariable=self.variables.get("name")),
+			"surname": CTkEntry(self, textvariable=self.variables.get("surname")),
+			"age": CTkEntry(self, textvariable=self.variables.get("age"))
 		}
 		self.set_state()
 
-		self.btn_edit = CTkButton(self.frame, text="Edit", command=self.edit)
-		self.btn_save = CTkButton(self.frame, text="Save", command=self.save)
+		self.btn_edit = CTkButton(self, text="Edit", command=self.edit)
+		self.btn_save = CTkButton(self, text="Save", command=self.save)
 
 	def show(self):
-		self.frame.pack()
+		self.pack()
 		self.set_placeholder()
 		self.pack_widgets()
+
+	def hide(self):
+		self.pack_forget()
 
 	def set_state(self):
 		if self.state:
