@@ -1,5 +1,4 @@
-from customtkinter import CTkFrame, CTkButton, CTkLabel, CTkEntry, CTkFrame, StringVar
-
+from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame
 
 class Menu:
 	def __init__(self, view):
@@ -12,15 +11,52 @@ class Menu:
 		pass
 
 
-class Shop:
+class Shop(CTkFrame):
 	def __init__(self, view):
+		super().__init__(view)
 		self.view = view
+		#TOP
+		self.top = CTkFrame(self)
+		self.credit = CTkLabel(self.top, text="Credit $500")
+		self.cart = CTkButton(self.top, text="Cart")
+		#TABLE
+		self.table = CTkScrollableFrame(self)
+		self.add_product()
 
 	def show(self):
-		pass
+		self.pack()
+		self.top.pack(side="top")
+		self.credit.pack(side="left")
+		self.cart.pack(side="right")
+		self.table.pack()
 
 	def hide(self):
-		pass
+		self.pack_forget()
+
+	def add_product(self):
+		pr = [
+			{"name":"Aceite", "brand":"Natura", "price":340},
+			{"name":"Atun", "brand":"Carrefour", "price":200},
+			{"name":"Autito", "brand":"Hot Wheels", "price":600},
+			{"name":"Aceite", "brand":"Natura", "price":340},
+			{"name":"Atun", "brand":"Carrefour", "price":200},
+			{"name":"Autito", "brand":"Hot Wheels", "price":600},
+			{"name":"Aceite", "brand":"Natura", "price":340},
+			{"name":"Atun", "brand":"Carrefour", "price":200},
+			{"name":"Autito", "brand":"Hot Wheels", "price":600},
+			{"name":"Aceite", "brand":"Natura", "price":340},
+			{"name":"Atun", "brand":"Carrefour", "price":200},
+			{"name":"Autito", "brand":"Hot Wheels", "price":600}
+		]
+		for p in pr:
+			f = CTkFrame(self.table)
+			name = CTkLabel(f, text=p.get("name"))
+			brand = CTkLabel(f, text=p.get("brand"))
+			price = CTkLabel(f, text=p.get("price"))
+			f.pack()
+			name.pack(side="left", ipadx=5)
+			brand.pack(side="left", ipadx=5)
+			price.pack(side="left", ipadx=5)
 
 
 class Cart:
@@ -34,63 +70,12 @@ class Cart:
 		pass
 
 
-class Profile(CTkFrame):
+class Profile:
 	def __init__(self, view):
-		super().__init__(view)
-
 		self.view = view
 
-		self.variables = {
-			"username": StringVar(),
-			"name": StringVar(),
-			"surname": StringVar(),
-			"age": StringVar(),
-		}
-		self.entries = {
-			"username": CTkEntry(self, textvariable=self.variables.get("username")),
-			"password": CTkEntry(self, show="*"),
-			"name": CTkEntry(self, textvariable=self.variables.get("name")),
-			"surname": CTkEntry(self, textvariable=self.variables.get("surname")),
-			"age": CTkEntry(self, textvariable=self.variables.get("age"))
-		}
-		self.set_state()
-
-		self.btn_edit = CTkButton(self, text="Edit", command=self.edit)
-		self.btn_save = CTkButton(self, text="Save", command=self.save)
-
 	def show(self):
-		self.pack()
-		self.set_placeholder()
-		self.pack_widgets()
+		pass
 
 	def hide(self):
-		self.pack_forget()
-
-	def set_state(self):
-		if self.state:
-			for entry in self.entries.values():
-				entry.configure(state="normal")
-		else:
-			for entry in self.entries.values():
-				entry.configure(state="disabled")
-		self.state = not self.state
-
-	def edit(self):
-		self.set_state()
-		self.btn_edit.pack_forget()
-		self.btn_save.pack()
-
-	def save(self):
-		self.set_state()
-		self.btn_save.pack_forget()
-		self.btn_edit.pack()
-
-	def set_placeholder(self):
-		user = self.controller.get_user()
-		for key,var in self.variables.items():
-			var.set(user.get(key))
-
-	def pack_widgets(self):
-		for entry in self.entries.values():
-			entry.pack()
-		self.btn_edit.pack()
+		pass

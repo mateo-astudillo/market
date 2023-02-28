@@ -33,8 +33,10 @@ class Login(CTkFrame):
 			button.pack()
 
 	def login(self):
-		username = self.entries.get("username").get()
-		password = self.entries.get("password").get()
+		# username = self.entries.get("username").get()
+		# password = self.entries.get("password").get()
+		username = "juan"
+		password = "hola"
 		if LoginController.login(username, password):
 			self.view.logged(username)
 
