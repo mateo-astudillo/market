@@ -35,7 +35,7 @@ class View(CTk):
 
 	def logged(self, username):
 		self.controller.logged(username)
-		
+
 	# Session
 	def login(self):
 		return Login(self)

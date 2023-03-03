@@ -1,15 +1,5 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame
 
-class Menu:
-	def __init__(self, view):
-		self.view = view
-
-	def show(self):
-		pass
-
-	def hide(self):
-		pass
-
 
 class Shop(CTkFrame):
 	def __init__(self, view):
