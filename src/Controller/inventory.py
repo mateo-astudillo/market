@@ -1,36 +1,34 @@
-from .controller import Controller
+from Model import Product, Brand
 
 
-class OptionsController(Controller):
-	def __init__(self):
-		super().__init__()
+class OptionsController:
+	pass
 
 
-class AddController(Controller):
-	def __init__(self):
-		super().__init__()
-
-	def add_product(self, name:str, price:float, brand:str):
+class AddController:
+	@staticmethod
+	def add_product(name:str, price:float, brand:str):
 		price = float(price)
-		self.model.product.add(name, price, brand)
+		Product.add(name, price, brand)
 
-	def add_brand(self, name:str):
-		self.model.brand.add(name)
+	@staticmethod
+	def add_brand(name:str):
+		Brand.add(name)
 
 
+class EditController:
+	@staticmethod
+	def remove_product(name:str, brand:str):
+		Product.remove(name, brand)
 
-class EditController(Controller):
-	def __init__(self):
-		super().__init__()
+	@staticmethod
+	def edit_product(id:str, column:str, value):
+		Product.edit(id, column, value)
 
-	def remove_product(self, name:str, brand:str):
-		self.model.product.remove(name, brand)
+	@staticmethod
+	def remove_brand(name:str):
+		Brand.remove(name)
 
-	def edit_product(self, id:str, column:str, value):
-		self.model.product.edit(id, column, value)
-
-	def remove_brand(self, name:str):
-		self.model.brand.remove(name)
-
-	def edit_brand(self, id:str, column:str, value):
-		self.model.brand.edit(id, column, value)
+	@staticmethod
+	def edit_brand(id:str, column:str, value):
+		Brand.edit(id, column, value)

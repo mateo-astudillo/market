@@ -17,7 +17,7 @@ class LoginController:
 
 class RegisterController:
 
-	@classmethod
+	@staticmethod
 	def register(username, password):
 		if not Validator.username(username):
 			print("invalid username")
