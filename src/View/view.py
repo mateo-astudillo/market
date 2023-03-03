@@ -16,7 +16,7 @@ class View(CTk):
 			"register": Register,
 			"shop": Shop,
 			"cart": Cart,
-			"prfoile": Profile,
+			"profile": Profile,
 			"options": Options,
 			"add": Add,
 			"edit": Edit,
