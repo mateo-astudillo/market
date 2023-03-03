@@ -36,11 +36,11 @@ class Login(CTkFrame):
 		username = self.entries.get("username").get()
 		password = self.entries.get("password").get()
 
-		if username == "admin":
-			self.view.go("options")
-
 		if LoginController.login(username, password):
-			self.view.logged(username)
+			if username == "admin":
+				self.view.go("options")
+			else:
+				self.view.logged(username)
 
 	def register(self):
 		self.view.go("register")
