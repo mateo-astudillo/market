@@ -2,6 +2,7 @@ from View import View
 from Model import Model
 from Controller import Controller
 
+
 class App:
 	def __init__(self):
 		self.view =  View()
@@ -14,6 +15,7 @@ class App:
 	def run(self):
 		self.controller.run()
 		self.view.mainloop()
+
 
 if __name__  == "__main__":
 	print("Start")

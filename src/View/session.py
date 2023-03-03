@@ -33,15 +33,17 @@ class Login(CTkFrame):
 			button.pack()
 
 	def login(self):
-		# username = self.entries.get("username").get()
-		# password = self.entries.get("password").get()
-		username = "juan"
-		password = "hola"
+		username = self.entries.get("username").get()
+		password = self.entries.get("password").get()
+
 		if LoginController.login(username, password):
-			self.view.logged(username)
+			if username == "admin":
+				self.view.go("options")
+			else:
+				self.view.logged(username)
 
 	def register(self):
-		pass
+		self.view.go("register")
 
 class Register(CTkFrame):
 	def __init__(self, view):
@@ -79,4 +81,4 @@ class Register(CTkFrame):
 			self.view.go("login")
 
 	def cancel(self):
-		pass
+		self.view.go("login")
