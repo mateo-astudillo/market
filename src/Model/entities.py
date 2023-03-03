@@ -77,10 +77,8 @@ class User:
 
 
 class Sale:
-	def __init__(self):
-		pass
-
-	def add(self, user_id:int, product_id:int):
+	@staticmethod
+	def add(user_id:int, product_id:int):
 		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ? );"
 		try:
 			product_price = Executor.execute_select(
@@ -99,14 +97,12 @@ class Sale:
 
 
 class Product:
-	def __init__(self):
-		pass
-
 	@staticmethod
 	def exist(name:str):
 		return Executor.exists("Product", "name", name)
 
-	def add(self, name:str, price:float, brand:str) -> bool:
+	@staticmethod
+	def add(name:str, price:float, brand:str) -> bool:
 		if not Executor.exists("Brand", "name", brand):
 			Brand.add(brand)
 		brand_id = Brand.get_id(brand)
@@ -140,19 +136,23 @@ class Product:
 		)
 		return result
 
-	def remove(self, name:str, brand:str) -> bool:
+	@staticmethod
+	def remove(name:str, brand:str) -> bool:
 		query = "DELETE FROM Product WHERE name = ? and brand_id = ?;"
 		brand_id = Brand.get_id(brand)
 		return Executor.execute_delete( query, (name, brand_id) )
 
-	def edit(self, id:str, column:str, value:str) -> bool:
+	@staticmethod
+	def edit(id:str, column:str, value:str) -> bool:
 		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
-class Brand:
-	def __init__(self):
+	def get_all():
 		pass
 
+
+class Brand:
+	@staticmethod
 	def exists(self, name:str) -> bool:
 		return Executor.exists("Brand", "name", name)
 
@@ -173,17 +173,18 @@ class Brand:
 			return None
 		return id
 
+	@staticmethod
 	def remove(self, name:str) -> bool:
 		query = "DELETE FROM Brand WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
 
+	@staticmethod
 	def edit(self, id:str, column:str, value:str) -> bool:
 		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
 
 class Database:
-
 	@staticmethod
 	def create():
 		queries = [
