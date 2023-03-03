@@ -11,14 +11,7 @@ class View(CTk):
 		self.controller = None
 
 		self.current_page = None
-
-	def set_controller(self, controller):
-		self.controller = controller
-
-	def go(self, page):
-		if self.current_page is not None:
-			self.current_page.hide()
-		pages = {
+		self.pages = {
 			"login": Login,
 			"register": Register,
 			"menu": Menu,
@@ -29,8 +22,14 @@ class View(CTk):
 			"add": Add,
 			"edit": Edit,
 		}
-		self.current_page = pages.get(page)
-		self.current_page = self.current_page(self)
+
+	def set_controller(self, controller):
+		self.controller = controller
+
+	def go(self, page):
+		if self.current_page is not None:
+			self.current_page.hide()
+		self.current_page = pages.get(page)(self)
 		self.current_page.show()
 
 	def logged(self, username):
