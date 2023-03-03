@@ -41,7 +41,7 @@ class Login(CTkFrame):
 			self.view.logged(username)
 
 	def register(self):
-		pass
+		self.view.go("register")
 
 class Register(CTkFrame):
 	def __init__(self, view):
@@ -79,4 +79,4 @@ class Register(CTkFrame):
 			self.view.go("login")
 
 	def cancel(self):
-		pass
+		self.view.go("login")
