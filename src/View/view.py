@@ -1,6 +1,6 @@
 from customtkinter import CTk
 from .session import Login, Register
-from .customer import Shop, Cart, Profile, Menu
+from .customer import Shop, Cart, Profile
 from .inventory import Options, Add, Edit
 
 
@@ -14,7 +14,6 @@ class View(CTk):
 		self.pages = {
 			"login": Login,
 			"register": Register,
-			"menu": Menu,
 			"shop": Shop,
 			"cart": Cart,
 			"profile": Profile,
