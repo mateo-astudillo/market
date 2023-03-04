@@ -17,11 +17,12 @@ class App:
 
 if __name__  == "__main__":
 	print("Start")
-	app = App()
-	app.run()
+	# app = App()
+	# app.run()
 	Product.add("Aceite", "Natura", 20, 500)
 	Product.add("Jugo", "Marolio", 60, 400)
 	Product.add("Atun", "Del Sur", 489, 30)
+	print(Product.get_all())
 
 
 

@@ -119,9 +119,9 @@ class Product:
 				pass
 
 		result = Executor.execute(
-			"INSERT INTO Product (%s, %s) VALUES(?, ?);",
-			("name", "brand_id"),
-			(name, brand_id)
+			"INSERT INTO Product (%s, %s, %s, %s) VALUES(?, ?, ?, ?);",
+			("name", "brand_id", "stock", "price"),
+			(name, brand_id, 0, 0)
 		)
 		Product.set_price(name, brand, price)
 		Product.set_stock(name, brand, stock)
@@ -158,10 +158,11 @@ class Product:
 		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
+	@staticmethod
 	def get_all():
 		return Executor.execute_select(
-			"SELECT %s, %s, %s, %s FROM Product INNER JOIN Brand ON %s = %s;",
-			("Product.name", "Brand.name", "Product.price", "Product.stock", "Product.brand_id", "Brand_id"),
+		 "SELECT %s, %s, %s, %s FROM Product INNER JOIN Brand ON %s = %s;",
+			("Product.name", "Brand.name", "Product.price", "Product.stock", "Product.brand_id", "Brand.id")
 		)
 
 
@@ -202,17 +203,11 @@ class Database:
 	@staticmethod
 	def create():
 		queries = [
-
 		# "DROP TABLE User;",
-
 		# "DROP TABLE Product;",
-
 		# "DROP TABLE Sale;",
-
 		# "DROP TABLE Brand;",
-
 		# "DROP TABLE Cart;",
-
 		"""
 		CREATE TABLE IF NOT EXISTS "Brand" (
 			"id"    INTEGER NOT NULL UNIQUE,
@@ -262,15 +257,10 @@ class Database:
 			PRIMARY KEY("id" AUTOINCREMENT)
 		);
 		""",
-
 		"ALTER TABLE User ADD CONSTRAINT User_fk0 FOREIGN KEY (cart_id) REFERENCES Cart(id);",
-
 		"ALTER TABLE Product ADD CONSTRAINT Product_fk0 FOREIGN KEY (brand_id) REFERENCES Brand(id);",
-
 		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk0 FOREIGN KEY (user_id) REFERENCES User(id);",
-
 		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk1 FOREIGN KEY (product_id) REFERENCES Product(id);",
-
 		"ALTER TABLE Cart ADD CONSTRAINT Cart_fk0 FOREIGN KEY (product_id) REFERENCES Product(id);",
 		]
 		try:
