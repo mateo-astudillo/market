@@ -26,10 +26,8 @@ class View:
 	def go(self, page):
 		if self.current_page is not None:
 			self.current_page.hide()
-
 		self.current_page = self.pages.get(page)(self)
 		self.current_page.show()
 
 	def logged(self, username):
 		self.controller.logged(username)
-
