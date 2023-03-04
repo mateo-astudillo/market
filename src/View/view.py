@@ -28,8 +28,20 @@ class View:
 			self.current_page.hide()
 
 		self.current_page = self.pages.get(page)(self)
+		pages = {
+			"login": Login,
+			"register": Register,
+			"menu": Menu,
+			"shop": Shop,
+			"cart": Cart,
+			"profile": Profile,
+			"options": Options,
+			"add": Add,
+			"edit": Edit,
+		}
+		self.current_page = pages.get(page)
+		self.current_page = self.current_page(self)
 		self.current_page.show()
 
 	def logged(self, username):
 		self.controller.logged(username)
-
