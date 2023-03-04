@@ -41,7 +41,7 @@ class Executor:
 			print(ex)
 		finally:
 			connection.close()
-			print(result)
+			# print(result)
 		return result
 
 	@staticmethod
