@@ -77,10 +77,8 @@ class User:
 
 
 class Sale:
-	def __init__(self):
-		pass
-
-	def add(self, user_id:int, product_id:int):
+	@staticmethod
+	def add(user_id:int, product_id:int):
 		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ? );"
 		try:
 			product_price = Executor.execute_select(
@@ -99,14 +97,12 @@ class Sale:
 
 
 class Product:
-	def __init__(self):
-		pass
-
 	@staticmethod
 	def exist(name:str):
 		return Executor.exists("Product", "name", name)
 
-	def add(self, name:str, price:float, brand:str) -> bool:
+	@staticmethod
+	def add(name:str, brand:str, stock:int, price:float) -> bool:
 		if not Executor.exists("Brand", "name", brand):
 			Brand.add(brand)
 		brand_id = Brand.get_id(brand)
@@ -128,6 +124,7 @@ class Product:
 			(name, brand_id)
 		)
 		Product.set_price(name, brand, price)
+		Product.set_stock(name, brand, stock)
 		return result
 
 	@staticmethod
@@ -140,19 +137,36 @@ class Product:
 		)
 		return result
 
-	def remove(self, name:str, brand:str) -> bool:
+	@staticmethod
+	def set_stock(name:str, brand:str, stock:int):
+		brand_id = Brand.get_id(brand)
+		result = Executor.execute(
+			"UPDATE Product SET %s = ? WHERE %s = ? and %s = ?;",
+			("stock", "name", "brand_id"),
+			(stock, name, brand_id)
+		)
+		return result
+
+	@staticmethod
+	def remove(name:str, brand:str) -> bool:
 		query = "DELETE FROM Product WHERE name = ? and brand_id = ?;"
 		brand_id = Brand.get_id(brand)
 		return Executor.execute_delete( query, (name, brand_id) )
 
-	def edit(self, id:str, column:str, value:str) -> bool:
+	@staticmethod
+	def edit(id:str, column:str, value:str) -> bool:
 		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
-class Brand:
-	def __init__(self):
-		pass
+	def get_all():
+		return Executor.execute_select(
+			"SELECT %s, %s, %s, %s FROM Product INNER JOIN Brand ON %s = %s;",
+			("Product.name", "Brand.name", "Product.price", "Product.stock", "Product.brand_id", "Brand_id"),
+		)
 
+
+class Brand:
+	@staticmethod
 	def exists(self, name:str) -> bool:
 		return Executor.exists("Brand", "name", name)
 
@@ -173,66 +187,91 @@ class Brand:
 			return None
 		return id
 
+	@staticmethod
 	def remove(self, name:str) -> bool:
 		query = "DELETE FROM Brand WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
 
+	@staticmethod
 	def edit(self, id:str, column:str, value:str) -> bool:
 		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
 
 class Database:
-
 	@staticmethod
 	def create():
 		queries = [
-			"""
-			CREATE TABLE IF NOT EXISTS User (
-				id integer PRIMARY KEY NOT NULL,
-				username varchar NOT NULL UNIQUE,
-				password varchar NOT NULL,
-				name varchar,
-				surname varchar,
-				age integer,
-				credit float DEFAULT 0
-			);
-			""",
 
-			"""
-			CREATE TABLE IF NOT EXISTS Product (
-				id integer PRIMARY KEY NOT NULL,
-				name varchar NOT NULL,
-				price float DEFAULT 0,
-				brand_id integer NOT NULL
-			);
-			""",
+		# "DROP TABLE User;",
 
-			"""
-			CREATE TABLE IF NOT EXISTS Sale (
-				id integer PRIMARY KEY NOT NULL,
-				user_id integer NOT NULL,
-				product_id integer NOT NULL,
-				date datetime,
-				price float
-			);
-			""",
+		# "DROP TABLE Product;",
 
-			"""
-			CREATE TABLE IF NOT EXISTS Brand (
-				id integer PRIMARY KEY NOT NULL,
-				name varchar NOT NULL UNIQUE
-			);
-			""",
+		# "DROP TABLE Sale;",
 
-			"""
-			CREATE TABLE IF NOT EXISTS Cart (
-				id integer PRIMARY KEY NOT NULL,
-				user_id integer NOT NULL UNIQUE,
-				product_id integer NOT NULL UNIQUE,
-				amount varchar NOT NULL DEFAULT 1
-			);
-			"""
+		# "DROP TABLE Brand;",
+
+		# "DROP TABLE Cart;",
+
+		"""
+		CREATE TABLE IF NOT EXISTS "Brand" (
+			"id"    INTEGER NOT NULL UNIQUE,
+			"name"    VARCHAR(64) NOT NULL UNIQUE,
+			PRIMARY KEY("id" AUTOINCREMENT)
+		);
+		""",
+		"""
+		CREATE TABLE IF NOT EXISTS "Cart" (
+			"id"    INTEGER NOT NULL UNIQUE,
+			"user_id"    INTEGER NOT NULL,
+			"product_id"    INTEGER NOT NULL,
+			"amount"    INTEGER NOT NULL,
+			PRIMARY KEY("id" AUTOINCREMENT)
+		);
+		""",
+		"""
+		CREATE TABLE IF NOT EXISTS "Product" (
+			"id"    INTEGER NOT NULL UNIQUE,
+			"brand_id"    INTEGER,
+			"name"    VARCHAR(64) NOT NULL UNIQUE,
+			"stock"    INTEGER,
+			"price"    INTEGER NOT NULL,
+			PRIMARY KEY("id" AUTOINCREMENT)
+		);
+		""",
+		"""
+		CREATE TABLE IF NOT EXISTS "Sale" (
+			"id"    INTEGER NOT NULL UNIQUE,
+			"user_id"    INTEGER NOT NULL,
+			"product_id"    INTEGER NOT NULL,
+			"date"    VARCHAR(64),
+			"total"    REAL,
+			PRIMARY KEY("id" AUTOINCREMENT)
+		);
+		""",
+		"""
+		CREATE TABLE IF NOT EXISTS "User" (
+			"id"    INTEGER NOT NULL UNIQUE,
+			"cart_id"    INTEGER NOT NULL,
+			"username"    VARCHAR(64) NOT NULL UNIQUE,
+			"password"    VARCHAR(64) NOT NULL,
+			"name"    VARCHAR(64),
+			"surname"    VARCHAR(64),
+			"age"    INTEGER,
+			"credit"    FLOAT,
+			PRIMARY KEY("id" AUTOINCREMENT)
+		);
+		""",
+
+		"ALTER TABLE User ADD CONSTRAINT User_fk0 FOREIGN KEY (cart_id) REFERENCES Cart(id);",
+
+		"ALTER TABLE Product ADD CONSTRAINT Product_fk0 FOREIGN KEY (brand_id) REFERENCES Brand(id);",
+
+		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk0 FOREIGN KEY (user_id) REFERENCES User(id);",
+
+		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk1 FOREIGN KEY (product_id) REFERENCES Product(id);",
+
+		"ALTER TABLE Cart ADD CONSTRAINT Cart_fk0 FOREIGN KEY (product_id) REFERENCES Product(id);",
 		]
 		try:
 			connection = connect(DATABASE)

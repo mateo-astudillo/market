@@ -27,17 +27,21 @@ class Executor:
 		return result
 
 	@staticmethod
-	def execute_select(query:str, columns:tuple ,values:tuple) -> list:
+	def execute_select(query:str, columns:tuple ,values:tuple = None) -> list:
 		try:
 			connection = connect(DATABASE)
 			cursor = connection.cursor()
-			cursor.execute(query % columns, values)
+			if values == None:
+				cursor.execute(query % columns)
+			else:
+				cursor.execute(query % columns, values)
 			result = cursor.fetchall()
 			connection.commit()
 		except Exception as ex:
 			print(ex)
 		finally:
 			connection.close()
+			print(result)
 		return result
 
 	@staticmethod
@@ -68,7 +72,7 @@ class Encrypter:
 	@staticmethod
 	def hash(password:str) -> str:
 		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
-	
+
 class Validator:
 
 	@staticmethod
