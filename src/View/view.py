@@ -1,5 +1,5 @@
 from .session import Login, Register
-from .customer import Shop, Cart, Profile, Menu
+from .customer import Shop, Cart, Profile
 from .inventory import Options, Add, Edit
 
 
@@ -10,15 +10,14 @@ class View:
 		self.current_page = None
 
 		self.pages = {
-			"login": self.login,
-			"register": self.register,
-			"menu": self.menu,
-			"shop": self.shop,
-			"cart": self.cart,
-			"profile": self.profile,
-			"options": self.options,
-			"add": self.add,
-			"edit": self.edit,
+			"login": Login,
+			"register": Register,
+			"shop": Shop,
+			"cart": Cart,
+			"profile": Profile,
+			"options": Options,
+			"add": Add,
+			"edit": Edit,
 		}
 
 	def set_controller(self, controller):
