@@ -29,11 +29,11 @@ class Add(CTkFrame):
 
 		self.title = CTkLabel(self, text="ADD :D")
 		self.back = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
-		self.add = CTkButton(self, text="Add", command=self.add)
+		self.add_btn = CTkButton(self, text="Add", command=self.add)
 
 		self.entries = {
 			"name": CTkEntry(self, placeholder_text="name"),
-			"brand": CTkEntry(self,placeholder_text="brand"),
+			"brand": CTkEntry(self, placeholder_text="brand"),
 			"stock": CTkEntry(self, placeholder_text="stock"),
 			"price": CTkEntry(self, placeholder_text="price")
 		}
@@ -43,7 +43,7 @@ class Add(CTkFrame):
 		self.title.pack()
 		self.pack_widgets()
 		self.back.pack(side="left")
-		self.add.pack(side="right")
+		self.add_btn.pack(side="right")
 
 	def hide(self):
 		self.pack_forget()
@@ -53,22 +53,20 @@ class Add(CTkFrame):
 			entry.pack()
 
 	def add(self):
-		data = self.get_data()
-		AddController.add_product(
-			data.get("name"),
-			data.get("brand"),
-			data.get("stock"),
-			data.get("price"),
-		)
+		name,brand,stock,price = self.get_data()
+		if AddController.add_product(name, brand, stock, price):
+			self.title.configure(fg_color="green")
+		else:
+			self.title.configure(fg_color="red")
 		self.reset_entry()
 
 	def get_data(self):
-		data = {
-			"name": self.entries.get("name").get(),
-			"brand": self.entries.get("brand").get(),
-			"stock": int(self.entries.get("stock").get()),
-			"price": int(self.entries.get("price").get())
-		}
+		data = (
+			self.entries.get("name").get(),
+			self.entries.get("brand").get(),
+			int(self.entries.get("stock").get()),
+			int(self.entries.get("price").get())
+		)
 		return data
 
 	def reset_entry(self):
