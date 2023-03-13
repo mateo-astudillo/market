@@ -1,4 +1,5 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
+from tkinter import END
 from Controller import AddController
 
 class Options(CTkFrame):
@@ -26,14 +27,13 @@ class Add(CTkFrame):
 
 		self.view = view
 
-
 		self.title = CTkLabel(self, text="ADD :D")
 		self.back = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
 		self.add = CTkButton(self, text="Add", command=self.add)
 
 		self.entries = {
 			"name": CTkEntry(self, placeholder_text="name"),
-			"brand": CTkEntry(self, placeholder_text="brand"),
+			"brand": CTkEntry(self,placeholder_text="brand"),
 			"stock": CTkEntry(self, placeholder_text="stock"),
 			"price": CTkEntry(self, placeholder_text="price")
 		}
@@ -58,7 +58,13 @@ class Add(CTkFrame):
 		stock = int(self.entries.get("stock").get())
 		price = int(self.entries.get("price").get())
 		AddController.add_product(name,brand,stock,price)
+		self.reset_entry()
 
+
+	def reset_entry(self):
+		for entry in self.entries.values():
+			entry.delete(0,END)
+		self.focus()
 
 class Edit(CTkFrame):
 	def __init__(self, view):
