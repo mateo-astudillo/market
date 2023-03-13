@@ -1,6 +1,7 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
 from Controller import ProfileController
 
+
 class Shop(CTkFrame):
 	def __init__(self, view):
 		super().__init__(view)
@@ -15,7 +16,6 @@ class Shop(CTkFrame):
 		#TABLE
 		self.table = CTkScrollableFrame(self)
 		self.add_product()
-
 
 	def show(self):
 		self.pack()

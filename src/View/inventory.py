@@ -1,5 +1,6 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
-
+from tkinter import END
+from Controller import AddController
 
 class Options(CTkFrame):
 	def __init__(self, view):
@@ -25,9 +26,11 @@ class Add(CTkFrame):
 		super().__init__(view)
 
 		self.view = view
+
 		self.title = CTkLabel(self, text="ADD :D")
 		self.back = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
-		self.add = CTkButton(self, text="Add")
+		self.add_btn = CTkButton(self, text="Add", command=self.add)
+
 		self.entries = {
 			"name": CTkEntry(self, placeholder_text="name"),
 			"brand": CTkEntry(self, placeholder_text="brand"),
@@ -40,7 +43,7 @@ class Add(CTkFrame):
 		self.title.pack()
 		self.pack_widgets()
 		self.back.pack(side="left")
-		self.add.pack(side="right")
+		self.add_btn.pack(side="right")
 
 	def hide(self):
 		self.pack_forget()
@@ -49,6 +52,27 @@ class Add(CTkFrame):
 		for entry in self.entries.values():
 			entry.pack()
 
+	def add(self):
+		name,brand,stock,price = self.get_data()
+		if AddController.add_product(name, brand, stock, price):
+			self.title.configure(fg_color="green")
+		else:
+			self.title.configure(fg_color="red")
+		self.reset_entry()
+
+	def get_data(self):
+		data = (
+			self.entries.get("name").get(),
+			self.entries.get("brand").get(),
+			int(self.entries.get("stock").get()),
+			int(self.entries.get("price").get())
+		)
+		return data
+
+	def reset_entry(self):
+		for entry in self.entries.values():
+			entry.delete(0,END)
+		self.focus()
 
 class Edit(CTkFrame):
 	def __init__(self, view):

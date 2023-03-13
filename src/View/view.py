@@ -11,6 +11,7 @@ class View(CTk):
 		self.controller = None
 
 		self.current_page = None
+
 		self.pages = {
 			"login": Login,
 			"register": Register,
