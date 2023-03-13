@@ -1,6 +1,6 @@
 from View import View
 from Model import Model
-from Controller import Controller
+from Controller import Controller, ProfileController, AddController
 
 
 class App:
