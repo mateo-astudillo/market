@@ -43,8 +43,8 @@ class User:
 	@staticmethod
 	def register(username:str, password:str) -> bool:
 		password = Encrypter.hash(password)
-		query = "INSERT INTO User (%s, %s, %s) VALUES(?, ?, ?);"
-		return Executor.execute( query, ("username","password", "cart_id"), (username, password, 1) )
+		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
+		return Executor.execute( query, ("username","password"), (username, password) )
 
 	@staticmethod
 	def login(username:str, password:str) -> bool:
@@ -68,6 +68,30 @@ class User:
 		except:
 			return None
 		return user
+
+class Cart:
+	@staticmethod
+	def add(user_id:int, product_id:int, amount:int) -> bool:
+		return Executor.execute(
+			"INSERT INTO Cart (%s, %s, %s) VALUES (?, ?, ?);",
+			("user_id", "product_id", "amount"),
+			(user_id, product_id, amount)
+		)
+
+	@staticmethod
+	def remove(user_id:int, product_id:int) -> bool:
+		return Executor.execute_delete(
+			"DELETE FROM Cart WHERE user_id = ? and product_id = ?;",
+			(user_id, product_id)
+		)
+
+	@staticmethod
+	def amount(user_id:int, product_id:int, amount:int):
+		return Executor.execute(
+			"UPDATE Cart SET %s = ? WHERE %s = ? AND %s = ?;",
+			("amount", "user_id", "product_id"),
+			(amount, user_id, product_id)
+		)
 
 
 class Sale:
@@ -141,9 +165,17 @@ class Product:
 		)
 
 	@staticmethod
-	def get_id(name:str) -> int:
-		return Executor.get_id(name, "name", "Product")
-
+	def get_id(name:str, brand:str) -> int:
+		try:
+			brand_id = Brand.get_id(brand)
+			id = Executor.execute_select(
+				"SELECT %s FROM Product WHERE %s = ? AND %s = ?;",
+				("id", "name", "brand_id"),
+				(name, brand_id)
+			)[0][0]
+		except:
+			id = None
+		return id
 
 class Brand:
 	@staticmethod
@@ -219,7 +251,6 @@ class Database:
 		"""
 		CREATE TABLE IF NOT EXISTS "User" (
 			"id"    INTEGER NOT NULL UNIQUE,
-			"cart_id"    INTEGER NOT NULL,
 			"username"    VARCHAR(64) NOT NULL UNIQUE,
 			"password"    VARCHAR(64) NOT NULL,
 			"name"    VARCHAR(64),
