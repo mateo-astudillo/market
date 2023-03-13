@@ -53,13 +53,23 @@ class Add(CTkFrame):
 			entry.pack()
 
 	def add(self):
-		name = self.entries.get("name").get()
-		brand = self.entries.get("brand").get()
-		stock = int(self.entries.get("stock").get())
-		price = int(self.entries.get("price").get())
-		AddController.add_product(name,brand,stock,price)
+		data = self.get_data()
+		AddController.add_product(
+			data.get("name"),
+			data.get("brand"),
+			data.get("stock"),
+			data.get("price"),
+		)
 		self.reset_entry()
 
+	def get_data(self):
+		data = {
+			"name": self.entries.get("name").get(),
+			"brand": self.entries.get("brand").get(),
+			"stock": int(self.entries.get("stock").get()),
+			"price": int(self.entries.get("price").get())
+		}
+		return data
 
 	def reset_entry(self):
 		for entry in self.entries.values():
