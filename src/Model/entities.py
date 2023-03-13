@@ -141,7 +141,7 @@ class Product:
 			("name", "brand_id", "stock", "price"),
 			(name, brand_id, 0, 0)
 		)
-		produc_id = Product.get_id(name)
+		produc_id = Product.get_id(name, brand)
 		Product.update(produc_id,"price",price)
 		Product.update(produc_id, "stock", stock)
 		return result
