@@ -19,9 +19,3 @@ if __name__  == "__main__":
 	print("Start")
 	app = App()
 	app.run()
-
-
-
-
-
-

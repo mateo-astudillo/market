@@ -73,7 +73,7 @@ class Cart:
 	@staticmethod
 	def add(user_id:int, product_id:int, amount:int) -> bool:
 		return Executor.execute(
-			"INSERT INTO Cart (%s, %s, %s) (?, ?, ?);",
+			"INSERT INTO Cart (%s, %s, %s) VALUES (?, ?, ?);",
 			("user_id", "product_id", "amount"),
 			(user_id, product_id, amount)
 		)
@@ -165,9 +165,17 @@ class Product:
 		)
 
 	@staticmethod
-	def get_id(name:str) -> int:
-		return Executor.get_id(name, "name", "Product")
-
+	def get_id(name:str, brand:str) -> int:
+		try:
+			brand_id = Brand.get_id(brand)
+			id = Executor.execute_select(
+				"SELECT %s FROM Product WHERE %s = ? AND %s = ?;",
+				("id", "name", "brand_id"),
+				(name, brand_id)
+			)[0][0]
+		except:
+			id = None
+		return id
 
 class Brand:
 	@staticmethod
