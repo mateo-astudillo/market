@@ -98,25 +98,21 @@ class Sale:
 
 class Product:
 	@staticmethod
-	def exist(name:str):
+	def exists_name(name:str) -> bool:
 		return Executor.exists("Product", "name", name)
 
 	@staticmethod
-	def add(name:str, brand:str, stock:int, price:float) -> bool:
-		if not Executor.exists("Brand", "name", brand):
-			Brand.add(brand)
-		brand_id = Brand.get_id(brand)
+	def exists(name:str, brand:str) -> bool:
+		product = Executor.execute_select(
+			"SELECT * FROM Product WHERE %s = ? AND %s = ?;",
+			("brand_id","name"),
+			(Brand.get_id(brand), name)
+		)
+		return bool(product)
 
-		if Product.exist(name):
-			try:
-				Executor.execute_select(
-					"SELECT * FROM Product WHERE %s = ? and %s = ?;",
-					("name", "brand_id"),
-					(name, brand_id)
-				)[0]
-				return False
-			except:
-				pass
+	@staticmethod
+	def add(name:str, brand:str, stock:int, price:float) -> bool:
+		brand_id = Brand.get_id(brand)
 
 		result = Executor.execute(
 			"INSERT INTO Product (%s, %s, %s, %s) VALUES(?, ?, ?, ?);",
@@ -168,7 +164,7 @@ class Product:
 
 class Brand:
 	@staticmethod
-	def exists(self, name:str) -> bool:
+	def exists(name:str) -> bool:
 		return Executor.exists("Brand", "name", name)
 
 	@staticmethod
@@ -228,7 +224,7 @@ class Database:
 		CREATE TABLE IF NOT EXISTS "Product" (
 			"id"    INTEGER NOT NULL UNIQUE,
 			"brand_id"    INTEGER,
-			"name"    VARCHAR(64) NOT NULL UNIQUE,
+			"name"    VARCHAR(64) NOT NULL,
 			"stock"    INTEGER,
 			"price"    INTEGER NOT NULL,
 			PRIMARY KEY("id" AUTOINCREMENT)
@@ -256,12 +252,7 @@ class Database:
 			"credit"    FLOAT,
 			PRIMARY KEY("id" AUTOINCREMENT)
 		);
-		""",
-		"ALTER TABLE User ADD CONSTRAINT User_fk0 FOREIGN KEY (cart_id) REFERENCES Cart(id);",
-		"ALTER TABLE Product ADD CONSTRAINT Product_fk0 FOREIGN KEY (brand_id) REFERENCES Brand(id);",
-		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk0 FOREIGN KEY (user_id) REFERENCES User(id);",
-		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk1 FOREIGN KEY (product_id) REFERENCES Product(id);",
-		"ALTER TABLE Cart ADD CONSTRAINT Cart_fk0 FOREIGN KEY (product_id) REFERENCES Product(id);",
+		"""
 		]
 		try:
 			connection = connect(DATABASE)

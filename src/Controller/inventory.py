@@ -7,9 +7,14 @@ class OptionsController:
 
 class AddController:
 	@staticmethod
-	def add_product(name:str, price:float, brand:str):
-		price = float(price)
-		Product.add(name, price, brand)
+	def add_product(name:str, brand:str, stock:int, price:float):
+
+		if not Brand.exists(brand):
+			Brand.add(brand)
+
+		if Product.exists(name, brand):
+			return
+		Product.add(name, brand, stock, price)
 
 	@staticmethod
 	def add_brand(name:str):
