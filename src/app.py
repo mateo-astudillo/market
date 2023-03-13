@@ -1,6 +1,6 @@
 from Controller import Controller
 from View import View
-from Model import Model, Product
+from Model import Model
 
 
 class App:
@@ -17,13 +17,5 @@ class App:
 
 if __name__  == "__main__":
 	print("Start")
-	# app = App()
-	# app.run()
-	Product.add("Aceite", "Natura", 20, 500)
-	Product.add("Jugo", "Marolio", 60, 400)
-	Product.add("Atun", "Del Sur", 489, 30)
-	print(Product.get_all())
-
-
-
-
+	app = App()
+	app.run()

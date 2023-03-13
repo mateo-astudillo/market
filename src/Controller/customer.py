@@ -1,4 +1,4 @@
-from Model import User
+from Model import User, Product, Cart
 
 class ShopController:
 	pass
@@ -6,14 +6,19 @@ class ShopController:
 
 class CartController:
 	@staticmethod
-	def add(self, product_id:int):
-		user_id = self.model.user.id
-		if not self.model.sale.add(user_id, product_id):
-			print("There are no products in the cart, crazy man")
-			return False
-		print("Product added")
-		return True
+	def add(user_id:int, product_name:str, brand_name:str, amount:int):
+		product_id = Product.get_id(product_name, brand_name)
+		return Cart.add(user_id, product_id, amount)
 
+	@staticmethod
+	def remove(user_id:int, product_name:str, brand_name:str):
+		product_id = Product.get_id(product_name, brand_name)
+		return Cart.remove(user_id, product_id)
+
+	@staticmethod
+	def amount(user_id:int, product_name:str, brand_name:str, amount:int):
+		product_id = Product.get_id(product_name, brand_name)
+		return Cart.amount(user_id, product_id, amount)
 
 class ProfileController:
 	@staticmethod

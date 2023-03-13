@@ -13,13 +13,7 @@ class User:
 
 	@staticmethod
 	def get_id(username:str) -> int:
-		query = "SELECT %s From User Where %s = ?;"
-		id = Executor.execute_select( query, ("id", "username"), (username,) )
-		try:
-			id = int(id[0][0])
-		except:
-			return None
-		return id
+		return Executor.get_id(username, "username", "User")
 
 	@staticmethod
 	def exists(username:str) -> bool:
@@ -75,6 +69,30 @@ class User:
 			return None
 		return user
 
+class Cart:
+	@staticmethod
+	def add(user_id:int, product_id:int, amount:int) -> bool:
+		return Executor.execute(
+			"INSERT INTO Cart (%s, %s, %s) VALUES (?, ?, ?);",
+			("user_id", "product_id", "amount"),
+			(user_id, product_id, amount)
+		)
+
+	@staticmethod
+	def remove(user_id:int, product_id:int) -> bool:
+		return Executor.execute_delete(
+			"DELETE FROM Cart WHERE user_id = ? and product_id = ?;",
+			(user_id, product_id)
+		)
+
+	@staticmethod
+	def amount(user_id:int, product_id:int, amount:int):
+		return Executor.execute(
+			"UPDATE Cart SET %s = ? WHERE %s = ? AND %s = ?;",
+			("amount", "user_id", "product_id"),
+			(amount, user_id, product_id)
+		)
+
 
 class Sale:
 	@staticmethod
@@ -95,56 +113,37 @@ class Sale:
 		)
 		return result
 
+	@staticmethod
+	def get_id(date:str):
+		return Executor.get_id(date, "date", "Sale")
+
 
 class Product:
 	@staticmethod
-	def exist(name:str):
+	def exists_name(name:str) -> bool:
 		return Executor.exists("Product", "name", name)
 
 	@staticmethod
-	def add(name:str, brand:str, stock:int, price:float) -> bool:
-		if not Executor.exists("Brand", "name", brand):
-			Brand.add(brand)
-		brand_id = Brand.get_id(brand)
+	def exists(name:str, brand:str) -> bool:
+		product = Executor.execute_select(
+			"SELECT * FROM Product WHERE %s = ? AND %s = ?;",
+			("brand_id","name"),
+			(Brand.get_id(brand), name)
+		)
+		return bool(product)
 
-		if Product.exist(name):
-			try:
-				Executor.execute_select(
-					"SELECT * FROM Product WHERE %s = ? and %s = ?;",
-					("name", "brand_id"),
-					(name, brand_id)
-				)[0]
-				return False
-			except:
-				pass
+	@staticmethod
+	def add(name:str, brand:str, stock:int, price:float) -> bool:
+		brand_id = Brand.get_id(brand)
 
 		result = Executor.execute(
 			"INSERT INTO Product (%s, %s, %s, %s) VALUES(?, ?, ?, ?);",
 			("name", "brand_id", "stock", "price"),
 			(name, brand_id, 0, 0)
 		)
-		Product.set_price(name, brand, price)
-		Product.set_stock(name, brand, stock)
-		return result
-
-	@staticmethod
-	def set_price(name:str, brand:str, price:float):
-		brand_id = Brand.get_id(brand)
-		result = Executor.execute(
-			"UPDATE Product SET %s = ? WHERE %s = ? and %s = ?;",
-			("price", "name", "brand_id"),
-			(price, name, brand_id)
-		)
-		return result
-
-	@staticmethod
-	def set_stock(name:str, brand:str, stock:int):
-		brand_id = Brand.get_id(brand)
-		result = Executor.execute(
-			"UPDATE Product SET %s = ? WHERE %s = ? and %s = ?;",
-			("stock", "name", "brand_id"),
-			(stock, name, brand_id)
-		)
+		produc_id = Product.get_id(name)
+		Product.update(produc_id,"price",price)
+		Product.update(produc_id, "stock", stock)
 		return result
 
 	@staticmethod
@@ -154,7 +153,7 @@ class Product:
 		return Executor.execute_delete( query, (name, brand_id) )
 
 	@staticmethod
-	def edit(id:str, column:str, value:str) -> bool:
+	def update(id:str, column:str, value:str) -> bool:
 		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
@@ -165,10 +164,22 @@ class Product:
 			("Product.name", "Brand.name", "Product.price", "Product.stock", "Product.brand_id", "Brand.id")
 		)
 
+	@staticmethod
+	def get_id(name:str, brand:str) -> int:
+		try:
+			brand_id = Brand.get_id(brand)
+			id = Executor.execute_select(
+				"SELECT %s FROM Product WHERE %s = ? AND %s = ?;",
+				("id", "name", "brand_id"),
+				(name, brand_id)
+			)[0][0]
+		except:
+			id = None
+		return id
 
 class Brand:
 	@staticmethod
-	def exists(self, name:str) -> bool:
+	def exists(name:str) -> bool:
 		return Executor.exists("Brand", "name", name)
 
 	@staticmethod
@@ -177,26 +188,19 @@ class Brand:
 		return Executor.execute( query, ("name",), (name,) )
 
 	@staticmethod
-	def get_id(name:str) -> int:
-		try:
-			id = Executor.execute_select(
-				"SELECT %s FROM Brand WHERE %s = ?",
-				("id", "name"),
-				(name, )
-			)[0][0]
-		except:
-			return None
-		return id
-
-	@staticmethod
-	def remove(self, name:str) -> bool:
+	def remove(name:str) -> bool:
 		query = "DELETE FROM Brand WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
 
 	@staticmethod
-	def edit(self, id:str, column:str, value:str) -> bool:
+	def edit(id:str, column:str, value:str) -> bool:
 		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
+
+	@staticmethod
+	def get_id(name:str) -> int:
+		return Executor.get_id(name, "name", "Brand")
+
 
 
 class Database:
@@ -228,7 +232,7 @@ class Database:
 		CREATE TABLE IF NOT EXISTS "Product" (
 			"id"    INTEGER NOT NULL UNIQUE,
 			"brand_id"    INTEGER,
-			"name"    VARCHAR(64) NOT NULL UNIQUE,
+			"name"    VARCHAR(64) NOT NULL,
 			"stock"    INTEGER,
 			"price"    INTEGER NOT NULL,
 			PRIMARY KEY("id" AUTOINCREMENT)
@@ -247,7 +251,6 @@ class Database:
 		"""
 		CREATE TABLE IF NOT EXISTS "User" (
 			"id"    INTEGER NOT NULL UNIQUE,
-			"cart_id"    INTEGER NOT NULL,
 			"username"    VARCHAR(64) NOT NULL UNIQUE,
 			"password"    VARCHAR(64) NOT NULL,
 			"name"    VARCHAR(64),
@@ -256,12 +259,7 @@ class Database:
 			"credit"    FLOAT,
 			PRIMARY KEY("id" AUTOINCREMENT)
 		);
-		""",
-		"ALTER TABLE User ADD CONSTRAINT User_fk0 FOREIGN KEY (cart_id) REFERENCES Cart(id);",
-		"ALTER TABLE Product ADD CONSTRAINT Product_fk0 FOREIGN KEY (brand_id) REFERENCES Brand(id);",
-		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk0 FOREIGN KEY (user_id) REFERENCES User(id);",
-		"ALTER TABLE Sale ADD CONSTRAINT Sale_fk1 FOREIGN KEY (product_id) REFERENCES Product(id);",
-		"ALTER TABLE Cart ADD CONSTRAINT Cart_fk0 FOREIGN KEY (product_id) REFERENCES Product(id);",
+		"""
 		]
 		try:
 			connection = connect(DATABASE)
