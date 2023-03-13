@@ -66,6 +66,17 @@ class Executor:
 		data = Executor.execute_select( query, (table, column), (value, ) )
 		return bool(data)
 
+	@staticmethod
+	def get_id(value:str, column:str, table:str) -> int:
+		try:
+			id = Executor.execute_select(
+				"SELECT %s FROM %s WHERE %s = ?",
+				("id", table, column),
+				(value, )
+			)[0][0]
+		except:
+			return None
+		return id
 
 class Encrypter:
 

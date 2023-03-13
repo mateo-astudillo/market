@@ -1,4 +1,4 @@
-from Controller import Controller, AddController
+from Controller import Controller
 from View import View
 from Model import Model
 
@@ -19,10 +19,7 @@ if __name__  == "__main__":
 	print("Start")
 	app = App()
 	app.run()
-	AddController.add_product("Galletitas", "Toddy", 20, 500)
-	AddController.add_product("Galletitas", "Toddy", 20, 300)
-	AddController.add_product("Galletitas", "Oreo", 60, 400)
-	AddController.add_product("Alfajor", "Oreo", 489, 30)
+
 
 
 

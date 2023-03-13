@@ -13,13 +13,7 @@ class User:
 
 	@staticmethod
 	def get_id(username:str) -> int:
-		query = "SELECT %s From User Where %s = ?;"
-		id = Executor.execute_select( query, ("id", "username"), (username,) )
-		try:
-			id = int(id[0][0])
-		except:
-			return None
-		return id
+		return Executor.get_id(username, "username", "User")
 
 	@staticmethod
 	def exists(username:str) -> bool:
@@ -49,8 +43,8 @@ class User:
 	@staticmethod
 	def register(username:str, password:str) -> bool:
 		password = Encrypter.hash(password)
-		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
-		return Executor.execute( query, ("username","password"), (username, password) )
+		query = "INSERT INTO User (%s, %s, %s) VALUES(?, ?, ?);"
+		return Executor.execute( query, ("username","password", "cart_id"), (username, password, 1) )
 
 	@staticmethod
 	def login(username:str, password:str) -> bool:
@@ -95,6 +89,10 @@ class Sale:
 		)
 		return result
 
+	@staticmethod
+	def get_id(date:str):
+		return Executor.get_id(date, "date", "Sale")
+
 
 class Product:
 	@staticmethod
@@ -119,28 +117,9 @@ class Product:
 			("name", "brand_id", "stock", "price"),
 			(name, brand_id, 0, 0)
 		)
-		Product.set_price(name, brand, price)
-		Product.set_stock(name, brand, stock)
-		return result
-
-	@staticmethod
-	def set_price(name:str, brand:str, price:float):
-		brand_id = Brand.get_id(brand)
-		result = Executor.execute(
-			"UPDATE Product SET %s = ? WHERE %s = ? and %s = ?;",
-			("price", "name", "brand_id"),
-			(price, name, brand_id)
-		)
-		return result
-
-	@staticmethod
-	def set_stock(name:str, brand:str, stock:int):
-		brand_id = Brand.get_id(brand)
-		result = Executor.execute(
-			"UPDATE Product SET %s = ? WHERE %s = ? and %s = ?;",
-			("stock", "name", "brand_id"),
-			(stock, name, brand_id)
-		)
+		produc_id = Product.get_id(name)
+		Product.update(produc_id,"price",price)
+		Product.update(produc_id, "stock", stock)
 		return result
 
 	@staticmethod
@@ -150,7 +129,7 @@ class Product:
 		return Executor.execute_delete( query, (name, brand_id) )
 
 	@staticmethod
-	def edit(id:str, column:str, value:str) -> bool:
+	def update(id:str, column:str, value:str) -> bool:
 		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
 
@@ -160,6 +139,10 @@ class Product:
 		 "SELECT %s, %s, %s, %s FROM Product INNER JOIN Brand ON %s = %s;",
 			("Product.name", "Brand.name", "Product.price", "Product.stock", "Product.brand_id", "Brand.id")
 		)
+
+	@staticmethod
+	def get_id(name:str) -> int:
+		return Executor.get_id(name, "name", "Product")
 
 
 class Brand:
@@ -173,26 +156,19 @@ class Brand:
 		return Executor.execute( query, ("name",), (name,) )
 
 	@staticmethod
-	def get_id(name:str) -> int:
-		try:
-			id = Executor.execute_select(
-				"SELECT %s FROM Brand WHERE %s = ?",
-				("id", "name"),
-				(name, )
-			)[0][0]
-		except:
-			return None
-		return id
-
-	@staticmethod
-	def remove(self, name:str) -> bool:
+	def remove(name:str) -> bool:
 		query = "DELETE FROM Brand WHERE name = ?;"
 		return Executor.execute_delete( query, (name, ) )
 
 	@staticmethod
-	def edit(self, id:str, column:str, value:str) -> bool:
+	def edit(id:str, column:str, value:str) -> bool:
 		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
 		return Executor.execute( query, (column, "id"), (value,id) )
+
+	@staticmethod
+	def get_id(name:str) -> int:
+		return Executor.get_id(name, "name", "Brand")
+
 
 
 class Database:
