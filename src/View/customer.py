@@ -2,20 +2,20 @@ from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTk
 from Controller import ProfileController
 
 
-class Menu:
+class Shop(CTkFrame):
 	def __init__(self, view):
+		super().__init__(view)
 		self.view = view
 
-	def show(self):
-		pass
+		#TOP
+		self.top = CTkFrame(self)
+		self.profile = CTkButton(self.top, text="Profile", command= lambda: self.view.go("profile"))
+		self.cart = CTkButton(self.top, text="Cart", command= lambda:self.view.go("cart"))
+		self.credit = CTkLabel(self.top, text="Credit $500")
 
-	def hide(self):
-		pass
-
-
-class Shop:
-	def __init__(self, view):
-		self.view = view
+		#TABLE
+		self.table = CTkScrollableFrame(self)
+		self.add_product()
 
 	def show(self):
 		self.pack()
