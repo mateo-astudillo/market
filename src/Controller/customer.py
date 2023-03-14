@@ -28,15 +28,15 @@ class CartController:
 
 class ProfileController:
 	@staticmethod
-	def remove(id):
+	def remove(id:int):
 		User.remove(id)
 
 	@staticmethod
-	def set_data(id, colunm, value):
+	def set_data(id:int, colunm:str, value):
 		User.update(id, colunm, value)
 
 	@staticmethod
-	def change_username(id, username):
+	def change_username(id:int, username:str):
 		if not User.exists(username):
 			User.change_username(id, username)
 			print("The username has succesfully changed")
@@ -44,11 +44,11 @@ class ProfileController:
 			print("The user already exists")
 
 	@staticmethod
-	def change_password(id, password):
+	def change_password(id:int, password:str):
 		User.change_password(id, password)
 
 	@staticmethod
-	def get_user(id) -> dict:
+	def get_user(id:int) -> dict:
 		username, name, surname, age = User.get_user(id)
 		user = {
 			"username": username,
