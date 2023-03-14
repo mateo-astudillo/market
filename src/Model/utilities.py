@@ -84,10 +84,12 @@ class Executor:
 			return None
 		return int(id)
 
+
 class Encrypter:
 	@staticmethod
 	def hash(password:str) -> str:
 		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
+
 
 class Validator:
 	@staticmethod
