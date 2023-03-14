@@ -1,6 +1,6 @@
+from Controller import Controller
 from View import View
 from Model import Model
-from Controller import Controller, ProfileController, AddController
 
 
 class App:
@@ -21,7 +21,3 @@ if __name__  == "__main__":
 	print("Start")
 	app = App()
 	app.run()
-
-
-
-

@@ -10,66 +10,92 @@ SALT = getenv("SALT")
 
 
 class User:
+	@staticmethod
+	def exists(username:str) -> bool:
+		return Executor.exists(username, "username", "User")
+
+	@staticmethod
+	def add(username:str, password:str) -> bool:
+		password = Encrypter.hash(password)
+		return Executor.execute(
+			"INSERT INTO User (%s, %s) VALUES(?, ?);",
+			("username","password"),
+			(username, password)
+		)
+
+	@staticmethod
+	def remove(id:str) -> bool:
+		return Executor.execute(
+			"DELETE FROM User WHERE %s = ?;",
+			("id", ),
+			(id, )
+		)
+
+	@staticmethod
+	def update(id:str, column:str, value:str) -> bool:
+		return Executor.execute(
+			"UPDATE User SET %s = ? WHERE %s = ?;",
+			(column, "id"),
+			(value, id)
+		)
+
+	@staticmethod
+	def change_username(id:int, username:str) -> bool:
+		return Executor.execute(
+			"UPDATE User SET %s = ? WHERE %s = ?;",
+			("username", "id"),
+			(username, id)
+		)
+
+	@staticmethod
+	def change_password(id:str, password:str) -> bool:
+		password = Encrypter.hash(password)
+		return Executor.execute(
+			"UPDATE User SET %s = ? WHERE %s = ?;",
+			("password", "id"),
+			(password, id)
+		)
+
+	@staticmethod
+	def login(username:str, password:str) -> bool:
+		password = Encrypter.hash(password)
+		try:
+			Executor.execute_fetchall(
+				"SELECT id FROM User WHERE %s = ? and %s = ?;",
+				("username","password"),
+				(username, password)
+			)[0]
+		except:
+			return False
+		return True
+
+	@staticmethod
+	def get_user(id:int) -> tuple:
+		"""
+		None if not exists
+		tuple = (username, name, surname, age)
+		"""
+		return Executor.execute_fetchone(
+			"SELECT %s, %s, %s, %s FROM User WHERE %s = ?",
+			("username", "name", "surname", "age", "id"),
+			(id, )
+		)
 
 	@staticmethod
 	def get_id(username:str) -> int:
 		return Executor.get_id(username, "username", "User")
 
-	@staticmethod
-	def exists(username:str) -> bool:
-		return Executor.exists("User", "username", username)
-
-	@staticmethod
-	def remove(id:str) -> bool:
-		query = "DELETE FROM User WHERE id = ?;"
-		return Executor.execute_delete( query, (id, ) )
-
-	@staticmethod
-	def set_data(id:str, column:str, value:str) -> bool:
-		query = "UPDATE User SET %s = ? WHERE %s = ?;"
-		return Executor.execute( query, (column, "id"), (value, id) )
-
-	@staticmethod
-	def change_username(id:int, username:str) -> bool:
-		query = "UPDATE User SET %s = ? WHERE %s = ?;"
-		return Executor.execute( query, ("username", "id"), (username, id) )
-
-	@staticmethod
-	def change_password(id:str, password:str) -> bool:
-		password = Encrypter.hash(password)
-		query = "UPDATE User SET %s = ? WHERE %s = ?;"
-		return Executor.execute( query, ("password", "id"), (password, id) )
-
-	@staticmethod
-	def register(username:str, password:str) -> bool:
-		password = Encrypter.hash(password)
-		query = "INSERT INTO User (%s, %s) VALUES(?, ?);"
-		return Executor.execute( query, ("username","password"), (username, password) )
-
-	@staticmethod
-	def login(username:str, password:str) -> bool:
-		password = Encrypter.hash(password)
-		query = "SELECT * FROM User WHERE %s = ? and %s = ?;"
-		data = Executor.execute_select( query, ("username","password"), (username, password))
-		try:
-			data = data[0]
-		except Exception:
-			return False
-		return bool(data)
-
-	@staticmethod
-	def get_user(id):
-		try:
-			user = Executor.execute_select(
-				"SELECT %s, %s, %s, %s FROM User WHERE %s = ?",
-				("username", "name", "surname", "age", "id"),
-				(id,)
-			)[0]
-		except:
-			return None
-		return user
 
 class Cart:
+	@staticmethod
+	def exists(user_id:int, product_id:int) -> bool:
+		result = Executor.execute_fetchone(
+			"SELECT id FROM Cart WHERE %s = ? and %s = ?;",
+			("user_id", "product_id"),
+			(user_id, product_id)
+		)
+		return bool(result)
+	
 	@staticmethod
 	def add(user_id:int, product_id:int, amount:int) -> bool:
 		return Executor.execute(
@@ -80,127 +106,137 @@ class Cart:
 
 	@staticmethod
 	def remove(user_id:int, product_id:int) -> bool:
-		return Executor.execute_delete(
-			"DELETE FROM Cart WHERE user_id = ? and product_id = ?;",
+		return Executor.execute(
+			"DELETE FROM Cart WHERE %s = ? and %s = ?;",
+			("user_id", "product_id"),
 			(user_id, product_id)
 		)
 
 	@staticmethod
-	def amount(user_id:int, product_id:int, amount:int):
+	def update(id:str, column:str, value:str) -> bool:
 		return Executor.execute(
-			"UPDATE Cart SET %s = ? WHERE %s = ? AND %s = ?;",
-			("amount", "user_id", "product_id"),
-			(amount, user_id, product_id)
+			"UPDATE Product SET %s = ? WHERE %s = ?;",
+			(column, "id"),
+			(value, id)
 		)
+
+	@staticmethod
+	def get_id(user_id:int, product_id:int) -> int:
+		if not Cart.exists(user_id, product_id):
+			return None
+		id = Executor.execute_fetchone(
+			"SELECT id FROM Product WHERE %s = ? AND %s = ?;",
+			("name", "brand_id"),
+			(name, brand_id)
+		)[0]
+		return int(id)
 
 
 class Sale:
 	@staticmethod
-	def add(user_id:int, product_id:int):
-		query = "INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ? );"
-		try:
-			product_price = Executor.execute_select(
-				"SELECT %s FROM Product WHERE %s = ?;",
-				("price", "id"),
-				(product_id, )
-			)[0]
-		except:
+	def add(user_id:int, product_id:int) -> bool:
+		product_price = Executor.execute_fetchone(
+			"SELECT %s FROM Product WHERE %s = ?;",
+			("price", "id"),
+			(product_id, )
+		)
+		if product_price is None:
 			return False
-		result = Executor.execute(
-			query,
+		return Executor.execute(
+			"INSERT INTO Sale (%s, %s, %s, %s) VALUES (?, ?, ?, ? );",
 			("user_id", "product_id", "price", "date"),
 			(user_id, product_id, product_price, "datetime()")
 		)
-		return result
 
 	@staticmethod
-	def get_id(date:str):
+	def get_id(date:str) -> int:
 		return Executor.get_id(date, "date", "Sale")
 
 
 class Product:
 	@staticmethod
-	def exists_name(name:str) -> bool:
-		return Executor.exists("Product", "name", name)
-
-	@staticmethod
-	def exists(name:str, brand:str) -> bool:
-		product = Executor.execute_select(
-			"SELECT * FROM Product WHERE %s = ? AND %s = ?;",
+	def exists(name:str, brand_id:int) -> bool:
+		result = Executor.execute_fetchone(
+			"SELECT id FROM Product WHERE %s = ? AND %s = ?;",
 			("brand_id","name"),
-			(Brand.get_id(brand), name)
+			(brand_id, name)
 		)
-		return bool(product)
+		return bool(result)
 
 	@staticmethod
-	def add(name:str, brand:str, stock:int, price:float) -> bool:
-		brand_id = Brand.get_id(brand)
-
-		result = Executor.execute(
-			"INSERT INTO Product (%s, %s, %s, %s) VALUES(?, ?, ?, ?);",
+	def add(name:str, brand_id:int, stock:int, price:float) -> bool:
+		return Executor.execute(
+			"INSERT INTO Product (%s, %s, %s, %s) VALUES (?, ?, ?, ?);",
 			("name", "brand_id", "stock", "price"),
-			(name, brand_id, 0, 0)
+			(name, brand_id, stock, price)
 		)
-		produc_id = Product.get_id(name, brand)
-		Product.update(produc_id,"price",price)
-		Product.update(produc_id, "stock", stock)
-		return result
 
 	@staticmethod
-	def remove(name:str, brand:str) -> bool:
-		query = "DELETE FROM Product WHERE name = ? and brand_id = ?;"
-		brand_id = Brand.get_id(brand)
-		return Executor.execute_delete( query, (name, brand_id) )
+	def remove(name:str, brand_id:int) -> bool:
+		return Executor.execute(
+			"DELETE FROM Product WHERE %s = ? and %s = ?;",
+			("name", "brand_id"),
+			(name, brand_id)
+		)
 
 	@staticmethod
 	def update(id:str, column:str, value:str) -> bool:
-		query = "UPDATE Product SET %s = ? WHERE %s = ?;"
-		return Executor.execute( query, (column, "id"), (value,id) )
-
-	@staticmethod
-	def get_all():
-		return Executor.execute_select(
-		 "SELECT %s, %s, %s, %s FROM Product INNER JOIN Brand ON %s = %s;",
-			("Product.name", "Brand.name", "Product.price", "Product.stock", "Product.brand_id", "Brand.id")
+		return Executor.execute(
+			"UPDATE Product SET %s = ? WHERE %s = ?;",
+			(column, "id"),
+			(value, id)
 		)
 
 	@staticmethod
-	def get_id(name:str, brand:str) -> int:
-		try:
-			brand_id = Brand.get_id(brand)
-			id = Executor.execute_select(
-				"SELECT %s FROM Product WHERE %s = ? AND %s = ?;",
-				("id", "name", "brand_id"),
-				(name, brand_id)
-			)[0][0]
-		except:
-			id = None
-		return id
+	def get_all() -> list:
+		return Executor.execute_fetchall(
+			"SELECT %s, %s, %s, %s FROM Product AS P INNER JOIN Brand As B ON %s = %s;",
+			("P.name", "B.name", "P.price","P.stock", "P.brand_id", "B.id")
+		)
+
+	@staticmethod
+	def get_id(name:str, brand_id:int) -> int:
+		if not Product.exists(name, brand_id):
+			return None
+		id = Executor.execute_fetchone(
+			"SELECT id FROM Product WHERE %s = ? AND %s = ?;",
+			("name", "brand_id"),
+			(name, brand_id)
+		)[0]
+		return int(id)
 
 class Brand:
 	@staticmethod
 	def exists(name:str) -> bool:
-		return Executor.exists("Brand", "name", name)
+		return Executor.exists(name, "name", "Brand")
 
 	@staticmethod
 	def add(name:str) -> bool:
-		query = "INSERT INTO Brand (%s) VALUES(?);"
-		return Executor.execute( query, ("name",), (name,) )
+		return Executor.execute(
+			"INSERT INTO Brand (%s) VALUES (?);",
+			("name", ),
+			(name, )
+		)
 
 	@staticmethod
 	def remove(name:str) -> bool:
-		query = "DELETE FROM Brand WHERE name = ?;"
-		return Executor.execute_delete( query, (name, ) )
+		return Executor.execute(
+			"DELETE FROM Brand WHERE %s = ?;",
+			("name", ),
+			(name, )
+		)
 
 	@staticmethod
-	def edit(id:str, column:str, value:str) -> bool:
-		query = "UPDATE Brand SET %s = ? WHERE %s = ?;"
-		return Executor.execute( query, (column, "id"), (value,id) )
+	def update(id:str, column:str, value:str) -> bool:
+		return Executor.execute(
+			"UPDATE Brand SET %s = ? WHERE %s = ?;",
+			(column, "id"),
+			(value,id)
+		)
 
 	@staticmethod
 	def get_id(name:str) -> int:
 		return Executor.get_id(name, "name", "Brand")
-
 
 
 class Database:
@@ -268,10 +304,9 @@ class Database:
 				query = query.replace("\t", "").replace("\n", " ")
 				cursor.execute(query)
 			connection.commit()
-			result = True
 		except Exception as ex:
 			print(ex)
-			result = False
+			return False
 		finally:
 			connection.close()
-		return result
+		return True

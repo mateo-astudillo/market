@@ -82,26 +82,49 @@ class Edit(CTkFrame):
 		self.top = CTkFrame(self)
 		self.title = CTkLabel(self.top, text="EDIT :D")
 		self.search = CTkEntry(self.top, placeholder_text="Search")
-		self.btn_search = CTkButton(self.top, text="Search")
+		self.search.bind("<KeyRelease>", self.get_product_to_search)
+		self.btn_search = CTkButton(self.top, text="Search", command=self.search_product)
 		self.table = CTkScrollableFrame(self)
-		self.list()
-		self.back = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
-
+		self.back_btn = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
+		self.show_all_products()
 
 	def show(self):
 		self.pack()
-		self.top.pack()
+		self.top.pack(side="top")
 		self.title.pack()
 		self.search.pack(side="left")
-		self.btn_search.pack(side="right")
 		self.table.pack()
-		self.back.pack()
 
 	def hide(self):
 		self.pack_forget()
 
-	def list(self):
+	def get_product_to_search(self,event):
+		if not event.keysym == "Caps_Lock":
+			product = self.search.get()
+			if product == "":
+				self.hide_list()
+				self.show_all_products()
+			else:
+				self.search_product(product)
+
+	def search_product(self, product):
 		products = EditController.get_all()
+		products_founded = []
+
+		for p in products:
+			if product in p[0] or product in p[1]:
+				products_founded.append(p)
+
+		self.hide_list()
+		self.show_all_products(products_founded)
+
+	def show_all_products(self, products = None):
+
+		if products == None:
+			products = EditController.get_all()
+
+		self.back_btn.pack(side="bottom")
+
 		for p in products:
 			f = CTkFrame(self.table)
 			name = CTkLabel(f, text=p[0])
@@ -111,3 +134,8 @@ class Edit(CTkFrame):
 			name.pack(side="left", ipadx=5)
 			brand.pack(side="left", ipadx=5)
 			price.pack(side="left", ipadx=5)
+
+	def hide_list(self):
+		for w in self.table.winfo_children():
+			w.pack_forget()
+		self.back_btn.pack_forget()
