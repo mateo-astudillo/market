@@ -4,7 +4,7 @@ from Model import User, Validator
 class LoginController:
 
 	@staticmethod
-	def login(username, password):
+	def login(username:str, password:str) -> bool:
 		if not Validator.username(username):
 			print("invalid username")
 			return False
@@ -18,14 +18,14 @@ class LoginController:
 class RegisterController:
 
 	@staticmethod
-	def register(username, password):
+	def register(username:str, password:str) -> bool:
 		if not Validator.username(username):
 			print("invalid username")
 			return False
 		if User.exists(username):
 			print("Username already exists")
 			return False
-		if not User.register(username, password):
+		if not User.add(username, password):
 			print("Error in database")
 			return False
 		print("register with exit")
