@@ -37,3 +37,7 @@ class EditController:
 	@staticmethod
 	def edit_brand(id:str, column:str, value):
 		Brand.edit(id, column, value)
+
+	@staticmethod
+	def get_all():
+		return Product.get_all()
