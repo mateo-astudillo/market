@@ -10,6 +10,7 @@ SALT = getenv("SALT")
 
 
 class Executor:
+
 	@staticmethod
 	def execute(query:str, columns:tuple, values:tuple) -> bool:
 		try:
@@ -17,40 +18,16 @@ class Executor:
 			cursor = connection.cursor()
 			cursor.execute(query % columns, values)
 			connection.commit()
+			result = True
 		except Exception as ex:
 			print(ex)
-			return False
-		finally:
-			connection.close()
-		return True
-
-	@staticmethod
-	def execute_fetchone(query:str, columns:tuple ,values:tuple = None) -> tuple:
-		"""
-		returns "None" if there is no record
-		"""
-		try:
-			connection = connect(DATABASE)
-			cursor = connection.cursor()
-			if values == None:
-				cursor.execute(query % columns)
-			else:
-				cursor.execute(query % columns, values)
-			result = cursor.fetchone()
-			connection.commit()
-		except Exception as ex:
-			print(ex)
-			return None
+			result = False
 		finally:
 			connection.close()
 		return result
 
 	@staticmethod
 	def execute_select(query:str, columns:tuple ,values:tuple = None) -> list:
-		return Executor.execute_fetchall(query, columns, values)
-	
-	@staticmethod
-	def execute_fetchall(query:str, columns:tuple ,values:tuple = None) -> list:
 		try:
 			connection = connect(DATABASE)
 			cursor = connection.cursor()
@@ -62,18 +39,31 @@ class Executor:
 			connection.commit()
 		except Exception as ex:
 			print(ex)
-			return None
+		finally:
+			connection.close()
+			# print(result)
+		return result
+
+	@staticmethod
+	def execute_delete(query:str, values:tuple) -> bool:
+		try:
+			connection = connect(DATABASE)
+			cursor = connection.cursor()
+			cursor.execute(query, values)
+			result = cursor.fetchall()
+			connection.commit()
+			result = True
+		except Exception as ex:
+			print(ex)
+			result = False
 		finally:
 			connection.close()
 		return result
 
 	@staticmethod
-	def exists(value:str, column:str, table:str) -> bool:
-		data = Executor.execute_fetchone(
-			"SELECT id FROM %s WHERE %s = ?;",
-			(table, column),
-			(value, )
-		)
+	def exists(table:str, column:str, value:str) -> bool:
+		query = "SELECT * FROM %s WHERE %s = ?;"
+		data = Executor.execute_select( query, (table, column), (value, ) )
 		return bool(data)
 
 	@staticmethod
@@ -86,14 +76,16 @@ class Executor:
 			)[0][0]
 		except:
 			return None
-		return int(id)
+		return id
 
 class Encrypter:
+
 	@staticmethod
 	def hash(password:str) -> str:
 		return sha.using(rounds=1000, salt=SALT).hash(password).split("$")[-1]
 
 class Validator:
+
 	@staticmethod
 	def username(username) -> bool:
 		username = username.replace(" ", "").replace("\n", "")

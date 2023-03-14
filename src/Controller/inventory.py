@@ -8,13 +8,13 @@ class OptionsController:
 class AddController:
 	@staticmethod
 	def add_product(name:str, brand:str, stock:int, price:float):
+
 		if not Brand.exists(brand):
 			Brand.add(brand)
 
 		if Product.exists(name, brand):
-			return False
+			return
 		Product.add(name, brand, stock, price)
-		return True
 
 	@staticmethod
 	def add_brand(name:str):

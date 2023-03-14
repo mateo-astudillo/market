@@ -1,6 +1,6 @@
+from Controller import Controller
 from View import View
 from Model import Model
-from Controller import Controller, ProfileController, AddController
 
 
 class App:
@@ -14,14 +14,8 @@ class App:
 
 	def run(self):
 		self.controller.run()
-		self.view.mainloop()
-
 
 if __name__  == "__main__":
 	print("Start")
 	app = App()
 	app.run()
-
-
-
-
