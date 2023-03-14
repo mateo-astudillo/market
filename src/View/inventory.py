@@ -1,6 +1,6 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
 from tkinter import END
-from Controller import AddController
+from Controller import AddController, EditController
 
 class Options(CTkFrame):
 	def __init__(self, view):
@@ -84,7 +84,7 @@ class Edit(CTkFrame):
 		self.search = CTkEntry(self.top, placeholder_text="Search")
 		self.btn_search = CTkButton(self.top, text="Search")
 		self.table = CTkScrollableFrame(self)
-		self.add_product()
+		self.list()
 		self.back = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
 
 
@@ -100,26 +100,13 @@ class Edit(CTkFrame):
 	def hide(self):
 		self.pack_forget()
 
-	def add_product(self):
-		pr = [
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600},
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600},
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600},
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600}
-		]
-		for p in pr:
+	def list(self):
+		products = EditController.get_all()
+		for p in products:
 			f = CTkFrame(self.table)
-			name = CTkLabel(f, text=p.get("name"))
-			brand = CTkLabel(f, text=p.get("brand"))
-			price = CTkLabel(f, text=p.get("price"))
+			name = CTkLabel(f, text=p[0])
+			brand = CTkLabel(f, text=p[1])
+			price = CTkLabel(f, text=p[2])
 			f.pack()
 			name.pack(side="left", ipadx=5)
 			brand.pack(side="left", ipadx=5)
