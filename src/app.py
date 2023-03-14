@@ -16,6 +16,14 @@ class App:
 		self.controller.run()
 
 if __name__  == "__main__":
+	from Controller import *
+	from Model import *
 	print("Start")
-	app = App()
-	app.run()
+	# app = App()
+	# app.run()
+	for p in Product.get_all():
+		print(p)
+
+	user_id = User.get_id("pepe")
+	CartController.remove(user_id, "alfajor", "jorgito")
+	
