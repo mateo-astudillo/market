@@ -1,37 +1,84 @@
+from customtkinter import CTkFrame, CTkButton, CTkLabel, CTkEntry, CTkFrame
 from Controller import LoginController, RegisterController
 
-class Login:
+
+class Login(CTkFrame):
 	def __init__(self, view):
+		super().__init__(view)
+
 		self.view = view
 
+		self.entries = {
+			"username": CTkEntry(self, placeholder_text="Username"),
+			"password": CTkEntry(self, placeholder_text="Password", show="*")
+		}
+
+		self.buttons = {
+			"login": CTkButton(self, text="Login", command=self.login),
+			"register": CTkButton(self, text="Register", command=self.register)
+		}
+
 	def show(self):
-		pass
+		self.pack()
+		self.pack_widgets()
 
 	def hide(self):
-		pass
+		self.pack_forget()
+
+	def pack_widgets(self):
+		for entry in self.entries.values():
+			entry.pack()
+
+		for button in self.buttons.values():
+			button.pack()
 
 	def login(self):
-		username = "juan"
-		password = "hola"
+		username = self.entries.get("username").get()
+		password = self.entries.get("password").get()
+
 		if LoginController.login(username, password):
-			self.view.logged(username)
+			if username == "admin":
+				self.view.go("options")
+			else:
+				self.view.logged(username)
 
 	def register(self):
-		self.controller.go("register")
+		self.view.go("register")
 
+class Register(CTkFrame):
+	def __init__(self, view):
+		super().__init__(view)
 
-class Register:
-	def __init__(self):
-		pass
+		self.view = view
+
+		self.entries = {
+			"username": CTkEntry(self, placeholder_text="Username"),
+			"password": CTkEntry(self, placeholder_text="Password", show="*")
+		}
+		self.buttons = {
+			"register": CTkButton(self, text="Register", command=self.register),
+			"cancel": CTkButton(self, text="Cancel", command=self.cancel)
+		}
 
 	def show(self):
-		pass
+		self.pack()
+		self.pack_widgets()
 
 	def hide(self):
-		pass
+		self.pack_forget()
+
+	def pack_widgets(self):
+		for entry in self.entries.values():
+			entry.pack()
+
+		for button in self.buttons.values():
+			button.pack()
 
 	def register(self):
-		username = "juan"
-		password = "hola"
+		username = self.entries.get("username").get()
+		password = self.entries.get("password").get()
 		if RegisterController.register(username, password):
-			self.controller.go("login")
+			self.view.go("login")
+
+	def cancel(self):
+		self.view.go("login")

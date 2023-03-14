@@ -20,7 +20,7 @@ class Controller:
 	def logged(self, username):
 		self.user_logged = True
 		self.user_id = User.get_id(username)
-		# self.view.go("shop")
+		self.view.go("shop")
 
 	def go(self, page):
 		if page in ["login", "register"]:

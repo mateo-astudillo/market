@@ -14,6 +14,7 @@ class App:
 
 	def run(self):
 		self.controller.run()
+		self.view.mainloop()
 
 
 if __name__  == "__main__":
