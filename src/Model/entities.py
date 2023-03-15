@@ -95,7 +95,7 @@ class Cart:
 			(user_id, product_id)
 		)
 		return bool(result)
-	
+
 	@staticmethod
 	def add(user_id:int, product_id:int, amount:int) -> bool:
 		return Executor.execute(

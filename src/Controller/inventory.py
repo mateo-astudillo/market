@@ -38,4 +38,3 @@ class EditController:
 	@staticmethod
 	def get_all():
 		return Product.get_all()
-
