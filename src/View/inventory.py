@@ -1,6 +1,6 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
 from tkinter import END
-from Controller import AddController, EditController
+from Controller import AddController, EditController, Validator
 
 class Options(CTkFrame):
 	def __init__(self, view):
@@ -81,15 +81,13 @@ class Edit(CTkFrame):
 		self.top = CTkFrame(self)
 		self.title = CTkLabel(self.top, text="EDIT :D")
 		self.search = CTkEntry(self.top, placeholder_text="Search")
-		# self.btn_search = CTkButton(self.top, text="Search", command=self.search_product)
 		self.table = CTkScrollableFrame(self)
 		self.back_btn = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
 
-		self.search.bind("<KeyRelease>", self.get_product_to_search)
+		self.search.bind("<KeyRelease>", self.search_keyrelease)
 
-		self.products = EditController.get_all()
-		
-		# self.show_all_products()
+		self.products = []
+		self.load_products()
 
 	def show(self):
 		self.pack()
@@ -97,51 +95,57 @@ class Edit(CTkFrame):
 		self.title.pack()
 		self.search.pack(side="left")
 		self.table.pack()
+		self.show_products()
 
 	def hide(self):
 		self.pack_forget()
 
-	def get_product_to_search(self, event):
-		if not bool(self.products):
-			return
-
-		if not event.keysym == "Caps_Lock":
-			product = self.search.get()
-			if product == "":
-				self.hide_list()
-				self.show_all_products()
+	def show_products(self):
+		for p in self.products:
+			if p.get("status"):
+				for l in p.get("labels"):
+					l.pack(side="left", padx=5)
+				p.get("frame").pack()
 			else:
-				self.search_product(product)
+				p.get("frame").pack_forget()
+	
+	def load_products(self):
+		for p in EditController.get_all():
+			f = CTkFrame(self.table)
+			name = CTkLabel(f, text=p.get("name"))
+			brand = CTkLabel(f, text=p.get("brand"))
+			stock = CTkLabel(f, text=p.get("stock"))
+			price = CTkLabel(f, text=p.get("price"))
+			product = {
+				"frame": f,
+				"labels": [name, brand, stock, price],
+				"name": p.get("name"),
+				"brand": p.get("brand"),
+				"stock": p.get("stock"),
+				"price": p.get("price"),
+				"status": True
+			}
+			self.products.append(product)
+
+	def search_keyrelease(self, event):
+		if not bool(self.products):
+			print("error load products")
+			return
+		if not Validator.key_press(event.keysym):
+			print("Not valid key")
+			return
+		product = self.search.get() # text in search entry
+		if product == "":
+			for p in self.products:
+				p["status"] = True
+			self.show_products()
+		else:
+			self.search_product(product)
 
 	def search_product(self, product):
-		products = EditController.get_all()
-		products_founded = []
-
-		for p in products:
-			if product in p[0] or product in p[1]:
-				products_founded.append(p)
-
-		self.hide_list()
-		self.show_all_products(products_founded)
-
-	def show_all_products(self, products = None):
-
-		if products == None:
-			products = EditController.get_all()
-
-		self.back_btn.pack(side="bottom")
-
-		for p in products:
-			f = CTkFrame(self.table)
-			name = CTkLabel(f, text=p[0])
-			brand = CTkLabel(f, text=p[1])
-			price = CTkLabel(f, text=p[2])
-			f.pack()
-			name.pack(side="left", ipadx=5)
-			brand.pack(side="left", ipadx=5)
-			price.pack(side="left", ipadx=5)
-
-	def hide_list(self):
-		for w in self.table.winfo_children():
-			w.pack_forget()
-		self.back_btn.pack_forget()
+		for p in self.products:
+			if product in p.get("name") or product in p.get("brand"):
+				p["status"] = True
+			else:
+				p["status"] = False
+		self.show_products()
