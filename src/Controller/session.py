@@ -1,4 +1,5 @@
 from Model import User
+from .validator import Validator
 
 
 class LoginController:
