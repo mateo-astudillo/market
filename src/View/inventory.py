@@ -5,8 +5,8 @@ from Controller import AddController, EditController
 class Options(CTkFrame):
 	def __init__(self, view):
 		super().__init__(view)
-
 		self.view = view
+
 		self.btn_add = CTkButton(self, text="Add Product",command=lambda: self.view.go("add"))
 		self.btn_edit = CTkButton(self, text="Edit Product", command=lambda: self.view.go("edit"))
 		self.btn_exit = CTkButton(self, text="Exit", command=lambda: self.view.go("login"))
@@ -24,7 +24,6 @@ class Options(CTkFrame):
 class Add(CTkFrame):
 	def __init__(self, view):
 		super().__init__(view)
-
 		self.view = view
 
 		self.title = CTkLabel(self, text="ADD :D")
@@ -77,16 +76,20 @@ class Add(CTkFrame):
 class Edit(CTkFrame):
 	def __init__(self, view):
 		super().__init__(view)
-
 		self.view = view
+
 		self.top = CTkFrame(self)
 		self.title = CTkLabel(self.top, text="EDIT :D")
 		self.search = CTkEntry(self.top, placeholder_text="Search")
-		self.search.bind("<KeyRelease>", self.get_product_to_search)
-		self.btn_search = CTkButton(self.top, text="Search", command=self.search_product)
+		# self.btn_search = CTkButton(self.top, text="Search", command=self.search_product)
 		self.table = CTkScrollableFrame(self)
 		self.back_btn = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
-		self.show_all_products()
+
+		self.search.bind("<KeyRelease>", self.get_product_to_search)
+
+		self.products = EditController.get_all()
+		
+		# self.show_all_products()
 
 	def show(self):
 		self.pack()
@@ -98,7 +101,10 @@ class Edit(CTkFrame):
 	def hide(self):
 		self.pack_forget()
 
-	def get_product_to_search(self,event):
+	def get_product_to_search(self, event):
+		if not bool(self.products):
+			return
+
 		if not event.keysym == "Caps_Lock":
 			product = self.search.get()
 			if product == "":
