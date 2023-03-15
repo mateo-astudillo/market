@@ -182,9 +182,12 @@ class Product:
 
 	@staticmethod
 	def get_all() -> list:
+		"""
+		(Name, Brand, Stock, Price)
+		"""
 		return Executor.execute_fetchall(
 			"SELECT %s, %s, %s, %s FROM Product AS P INNER JOIN Brand As B ON %s = %s;",
-			("P.name", "B.name", "P.price","P.stock", "P.brand_id", "B.id")
+			("P.name", "B.name", "P.stock","P.price", "P.brand_id", "B.id")
 		)
 
 	@staticmethod

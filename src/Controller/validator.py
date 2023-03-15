@@ -8,3 +8,9 @@ class Validator:
 		if match('^[a-zA-Z0-9._]*$', username) is None:
 			return False
 		return True
+
+	@staticmethod
+	def key_press(key) -> bool:
+		if match('^[a-zA-Z0-9._]*$', key) is None:
+			return False
+		return True

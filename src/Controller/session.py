@@ -1,4 +1,4 @@
-from Controller import User, Validator
+from Model import User
 
 
 class LoginController:

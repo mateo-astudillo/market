@@ -17,6 +17,10 @@ class App:
 
 
 if __name__  == "__main__":
+	from Controller import EditController
 	print("Start")
 	app = App()
 	app.run()
+	p = EditController.get_all()
+	for i in p:
+		print(i)
