@@ -96,6 +96,7 @@ class Edit(CTkFrame):
 		self.search.pack(side="left")
 		self.table.pack()
 		self.show_products()
+		self.back_btn.pack(side="bottom")
 
 	def hide(self):
 		self.pack_forget()
@@ -111,14 +112,13 @@ class Edit(CTkFrame):
 	
 	def load_products(self):
 		for p in EditController.get_all():
-			f = CTkFrame(self.table)
-			name = CTkLabel(f, text=p.get("name"))
-			brand = CTkLabel(f, text=p.get("brand"))
-			stock = CTkLabel(f, text=p.get("stock"))
-			price = CTkLabel(f, text=p.get("price"))
+			frame = CTkFrame(self.table)
+			labels = []
+			for column in p.values():
+				labels.append( CTkLabel(frame, text=column) )
 			product = {
-				"frame": f,
-				"labels": [name, brand, stock, price],
+				"frame": frame,
+				"labels": labels,
 				"name": p.get("name"),
 				"brand": p.get("brand"),
 				"stock": p.get("stock"),
@@ -134,7 +134,7 @@ class Edit(CTkFrame):
 		if not Validator.key_press(event.keysym):
 			print("Not valid key")
 			return
-		product = self.search.get() # text in search entry
+		product = self.search.get().lower() # text in search entry
 		if product == "":
 			for p in self.products:
 				p["status"] = True
@@ -148,4 +148,4 @@ class Edit(CTkFrame):
 				p["status"] = True
 			else:
 				p["status"] = False
-		self.show_products()
+				p.get("frame").pack_forget()
