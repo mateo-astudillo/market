@@ -36,5 +36,15 @@ class EditController:
 		Brand.update(id, column, value)
 
 	@staticmethod
-	def get_all():
-		return Product.get_all()
+	def get_all() -> list:
+		products = []
+		for product in Product.get_all():
+			name, brand, stock, price = product
+			p = {
+				"name": name,
+				"brand": brand,
+				"stock": int(stock),
+				"price": float(price),
+			}
+			products.append(p)
+		return products
