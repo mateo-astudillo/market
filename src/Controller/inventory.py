@@ -47,8 +47,8 @@ class EditController:
 		for product in Product.get_all():
 			name, brand, stock, price = product
 			p = {
-				"name": name,
-				"brand": brand,
+				"name": name.capitalize(),
+				"brand": brand.capitalize(),
 				"stock": int(stock),
 				"price": float(price),
 			}
