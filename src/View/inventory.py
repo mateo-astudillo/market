@@ -104,37 +104,33 @@ class Edit(CTkFrame):
 	def show_products(self):
 		for p in self.products:
 			if p.get("status"):
-				for l in p.get("labels"):
-					l.pack(side="left", padx=5)
 				p.get("frame").pack()
 			else:
 				p.get("frame").pack_forget()
-	
+
 	def load_products(self):
 		for p in EditController.get_all():
 			frame = CTkFrame(self.table)
 			labels = []
-			for column in p.values():
-				labels.append( CTkLabel(frame, text=column) )
-			product = {
-				"frame": frame,
-				"labels": labels,
-				"name": p.get("name"),
-				"brand": p.get("brand"),
-				"stock": p.get("stock"),
-				"price": p.get("price"),
-				"status": True
-			}
-			self.products.append(product)
+			for value in p.values():
+				l = CTkLabel(frame, text=value)
+				l.pack(side="left", padx=5)
+				labels.append(l)
+			p["frame"] = frame
+			p["status"] = True
+			p["labels"] = labels
+			p["name"] = p.get("name").upper()
+			p["brand"] = p.get("brand").upper()
+			self.products.append(p)
 
 	def search_keyrelease(self, event):
 		if not bool(self.products):
 			print("error load products")
 			return
-		if not Validator.key_press(event.keysym):
+		if not Validator.key_press(str(event.char)):
 			print("Not valid key")
 			return
-		product = self.search.get().lower() # text in search entry
+		product = self.search.get().upper()
 		if product == "":
 			for p in self.products:
 				p["status"] = True
