@@ -1,5 +1,5 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
-from Controller import ProfileController
+from Controller import ProfileController, ShopController
 
 
 class Shop(CTkFrame):
@@ -15,7 +15,8 @@ class Shop(CTkFrame):
 
 		#TABLE
 		self.table = CTkScrollableFrame(self)
-		self.add_product()
+		self.products = []
+		self.load_products()
 
 	def show(self):
 		self.pack()
@@ -23,35 +24,35 @@ class Shop(CTkFrame):
 		self.profile.pack(side="left")
 		self.credit.pack(side="left")
 		self.cart.pack(side="right")
+		self.show_products()
 		self.table.pack()
 
 	def hide(self):
 		self.pack_forget()
 
-	def add_product(self):
-		pr = [
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600},
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600},
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600},
-			{"name":"Aceite", "brand":"Natura", "price":340},
-			{"name":"Atun", "brand":"Carrefour", "price":200},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600}
-		]
-		for p in pr:
-			f = CTkFrame(self.table)
-			name = CTkLabel(f, text=p.get("name"))
-			brand = CTkLabel(f, text=p.get("brand"))
-			price = CTkLabel(f, text=p.get("price"))
-			f.pack()
-			name.pack(side="left", ipadx=5)
-			brand.pack(side="left", ipadx=5)
-			price.pack(side="left", ipadx=5)
+	def show_products(self):
+		for p in self.products:
+			p.get("frame").pack()
+			for l in p.get("labels"):
+				l.pack(side="left", padx=5)
+			p.get("button").pack(side="right")
+
+	def load_products(self):
+		for p in ShopController.get_products():
+			frame = CTkFrame(self.table)
+			button = CTkButton(frame, text="Add", command=lambda: self.add(p))
+			labels = []
+			for value in p.values():
+				l = CTkLabel(frame, text=value)
+				labels.append(l)
+			p["frame"] = frame
+			p["labels"] = labels
+			p["button"] = button
+			p["in_cart"] = False
+			self.products.append(p)
+
+	def add(self, product):
+		product["in_cart"] = True
 
 
 class Cart(CTkFrame):
