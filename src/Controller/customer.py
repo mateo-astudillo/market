@@ -2,7 +2,19 @@ from Model import User, Product, Cart, Brand
 
 
 class ShopController:
-	pass
+	@staticmethod
+	def get_products():
+		products = []
+		for product in Product.get_all():
+			name, brand, stock, price = product
+			p = {
+				"name": name.capitalize(),
+				"brand": brand.capitalize(),
+				"stock": int(stock),
+				"price": float(price),
+			}
+			products.append(p)
+		return products
 
 
 class CartController:
