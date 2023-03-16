@@ -8,6 +8,8 @@ class OptionsController:
 class AddController:
 	@staticmethod
 	def add_product(name:str, brand:str, stock:int, price:float):
+		brand = brand.upper()
+		name = name.upper()
 		if not Brand.exists(brand):
 			Brand.add(brand)
 		brand_id = Brand.get_id(brand)
@@ -19,20 +21,24 @@ class AddController:
 class EditController:
 	@staticmethod
 	def remove_product(name:str, brand:str):
-		brand_id = Brand.get_id(brand)
-		Product.remove(name, brand_id)
+		brand_id = Brand.get_id(brand.upper())
+		Product.remove(name.upper(), brand_id)
 
 	@staticmethod
 	def edit_product(id:str, column:str, value):
+		if type(value) is str:
+			value = value.upper()
 		Product.update(id, column, value)
 
 	@staticmethod
 	def remove_brand(name:str):
 		# First check product
-		Brand.remove(name)
+		Brand.remove(name.upper())
 
 	@staticmethod
 	def edit_brand(id:str, column:str, value):
+		if type(value) is str:
+			value = value.upper()
 		Brand.update(id, column, value)
 
 	@staticmethod
@@ -41,8 +47,8 @@ class EditController:
 		for product in Product.get_all():
 			name, brand, stock, price = product
 			p = {
-				"name": name,
-				"brand": brand,
+				"name": name.capitalize(),
+				"brand": brand.capitalize(),
 				"stock": int(stock),
 				"price": float(price),
 			}
