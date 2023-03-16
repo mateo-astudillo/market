@@ -9,8 +9,8 @@ class Shop(CTkFrame):
 
 		#TOP
 		self.top = CTkFrame(self)
-		self.profile = CTkButton(self.top, text="Profile", command= lambda: self.view.go("profile"))
-		self.cart = CTkButton(self.top, text="Cart", command= lambda:self.view.go("cart"))
+		self.profile = CTkButton(self.top, text="Profile", command=lambda: self.view.go("profile"))
+		self.cart = CTkButton(self.top, text="Cart", command=lambda: self.view.go("cart"))
 		self.credit = CTkLabel(self.top, text="Credit $500")
 
 		#TABLE

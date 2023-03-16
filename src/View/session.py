@@ -18,6 +18,10 @@ class Login(CTkFrame):
 			"register": CTkButton(self, text="Register", command=self.register)
 		}
 
+		self.entries.get("username").focus()
+		self.entries.get("username").bind("<KeyRelease>", command=self.focus_password)
+		self.entries.get("password").bind("<KeyRelease>", command=self.login_return)
+
 	def show(self):
 		self.pack()
 		self.pack_widgets()
@@ -31,6 +35,14 @@ class Login(CTkFrame):
 
 		for button in self.buttons.values():
 			button.pack()
+
+	def focus_password(self, event):
+		if event.keysym == "Return":
+			self.entries.get("password").focus()
+
+	def login_return(self, event):
+		if event.keysym == "Return":
+			self.login()
 
 	def login(self):
 		username = self.entries.get("username").get()
@@ -60,6 +72,10 @@ class Register(CTkFrame):
 			"cancel": CTkButton(self, text="Cancel", command=self.cancel)
 		}
 
+		self.entries.get("username").focus()
+		self.entries.get("username").bind("<KeyRelease>", command=self.focus_password)
+		self.entries.get("password").bind("<KeyRelease>", command=self.register_return)
+
 	def show(self):
 		self.pack()
 		self.pack_widgets()
@@ -73,6 +89,14 @@ class Register(CTkFrame):
 
 		for button in self.buttons.values():
 			button.pack()
+
+	def focus_password(self, event):
+		if event.keysym == "Return":
+			self.entries.get("password").focus()
+
+	def register_return(self, event):
+		if event.keysym == "Return":
+			self.register()
 
 	def register(self):
 		username = self.entries.get("username").get()
