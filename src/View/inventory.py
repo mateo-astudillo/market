@@ -29,13 +29,9 @@ class Add(CTkFrame):
 		self.title = CTkLabel(self, text="ADD :D")
 		self.back = CTkButton(self, text="Back", command=lambda:self.view.go("options"))
 		self.add_btn = CTkButton(self, text="Add", command=self.add)
+		self.widgets = []
 
-		self.entries = {
-			"name": CTkEntry(self, placeholder_text="name"),
-			"brand": CTkEntry(self, placeholder_text="brand"),
-			"stock": CTkEntry(self, placeholder_text="stock"),
-			"price": CTkEntry(self, placeholder_text="price")
-		}
+		self.create_widgets()
 
 	def show(self):
 		self.pack()
@@ -48,11 +44,25 @@ class Add(CTkFrame):
 		self.pack_forget()
 
 	def pack_widgets(self):
-		for entry in self.entries.values():
-			entry.pack()
+		for widget in self.widgets:
+			widget.get("frame").pack()
+			widget.get("label").pack(side="left")
+			widget.get("entry").pack(side="right")
+
+	def create_widgets(self):
+		items = ("name", "brand", "stock", "price")
+		for item in items:
+			frame = CTkFrame(self)
+			widget = {
+				"name": item,
+				"frame": frame,
+				"entry": CTkEntry(frame, placeholder_text=item),
+				"label": CTkLabel(frame, text=item)
+			}
+			self.widgets.append(widget)
 
 	def add(self):
-		name,brand,stock,price = self.get_data()
+		name, brand, stock, price = self.get_data()
 		if AddController.add_product(name, brand, stock, price):
 			self.title.configure(fg_color="green")
 		else:
@@ -60,16 +70,15 @@ class Add(CTkFrame):
 		self.reset_entry()
 
 	def get_data(self):
-		data = (
-			self.entries.get("name").get(),
-			self.entries.get("brand").get(),
-			int(self.entries.get("stock").get()),
-			int(self.entries.get("price").get())
-		)
+		data = []
+		for widget in self.widgets:
+			entry = widget.get("entry")
+			data.append(entry.get())
 		return data
 
 	def reset_entry(self):
-		for entry in self.entries.values():
+		for widget in self.widgets:
+			entry = widget.get("entry")
 			entry.delete(0,END)
 		self.focus()
 
