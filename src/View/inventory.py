@@ -119,6 +119,8 @@ class Edit(CTkFrame):
 			p["frame"] = frame
 			p["status"] = True
 			p["labels"] = labels
+			p["name"] = p.get("name").upper()
+			p["brand"] = p.get("brand").upper()
 			self.products.append(p)
 
 	def search_keyrelease(self, event):
@@ -128,7 +130,7 @@ class Edit(CTkFrame):
 		if not Validator.key_press(str(event.char)):
 			print("Not valid key")
 			return
-		product = self.search.get()
+		product = self.search.get().upper()
 		if product == "":
 			for p in self.products:
 				p["status"] = True
