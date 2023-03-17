@@ -16,6 +16,15 @@ class ShopController:
 			products.append(p)
 		return products
 
+	@staticmethod
+	def add_to_cart(user_id:int, product_name:str, brand_name:str, amount:int) -> bool:
+		brand_id = Brand.get_id(brand_name)
+		product_id = Product.get_id(product_name, brand_id)
+		if Cart.exists(user_id, product_id):
+			id = Cart.get_id(user_id, product_id)
+			return Cart.update(id, "amount", amount)
+		return Cart.add(user_id, product_id, amount)
+
 
 class CartController:
 	@staticmethod

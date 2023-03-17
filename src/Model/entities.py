@@ -121,8 +121,15 @@ class Cart:
 		)
 
 	@staticmethod
-	def get_id():
-		pass
+	def get_id(user_id:int, product_id:int) -> int: 
+		if not Cart.exists(user_id, product_id):
+			return None
+		id = Executor.execute_fetchone(
+			"SELECT id FROM Cart WHERE %s = ? AND %s = ?;",
+			("user_id", "product_id"),
+			(user_id, product_id)
+		)[0]
+		return int(id)
 
 
 class Sale:
