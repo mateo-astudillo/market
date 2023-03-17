@@ -27,7 +27,7 @@ class User:
 	def remove(id:str) -> bool:
 		return Executor.execute(
 			"DELETE FROM User WHERE %s = ?;",
-			("id", )
+			("id", ),
 			(id, )
 		)
 
@@ -158,7 +158,7 @@ class Product:
 	def exists(name:str, brand_id:int) -> bool:
 		result = Executor.execute_fetchone(
 			"SELECT id FROM Product WHERE %s = ? AND %s = ?;",
-			("brand_id","name"),
+			("brand_id", "name"),
 			(brand_id, name)
 		)
 		return bool(result)
@@ -191,7 +191,7 @@ class Product:
 	def get_value(id:int, column:str) -> list:
 		return Executor.execute_fetchone(
 			"SELECT %s FROM Product WHERE %s = ?;",
-			(column, ),
+			(column, "id"),
 			(id, )
 		)
 

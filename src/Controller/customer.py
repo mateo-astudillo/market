@@ -23,7 +23,8 @@ class ShopController:
 		brand_id = Brand.get_id(brand_name)
 		product_id = Product.get_id(product_name, brand_id)
 		stock = Product.get_value(product_id, "stock")
-		Product.update(product_id, "stock", stock - 1)
+		stock = int(stock[0]) - amount
+		Product.update(product_id, "stock", stock)
 		if Cart.exists(user_id, product_id):
 			id = Cart.get_id(user_id, product_id)
 			return Cart.update(id, "amount", amount)
