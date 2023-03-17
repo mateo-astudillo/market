@@ -23,7 +23,7 @@ class ShopController:
 		brand_id = Brand.get_id(brand_name)
 		product_id = Product.get_id(product_name, brand_id)
 		stock = Product.get_value(product_id, "stock")
-		stock = int(stock[0]) - amount
+		stock = int(stock[0]) - 1
 		Product.update(product_id, "stock", stock)
 		if Cart.exists(user_id, product_id):
 			id = Cart.get_id(user_id, product_id)
@@ -50,6 +50,21 @@ class CartController:
 		product_id = Product.get_id(product_name, brand_id)
 		cart_id = Cart.get_id(user_id, product_id)
 		return Cart.update(cart_id, "amount", amount)
+
+	@staticmethod
+	def get_products():
+		product_ids = Cart.get_product_ids(user_id)
+		products = []
+		for id in product_ids:
+			name, brand, stock, price = Product.get_one(id)
+			p = {
+				"name": name.capitalize(),
+				"brand": brand.capitalize(),
+				"stock": int(stock),
+				"price": float(price)
+			}
+			products.append(p)
+		return products
 
 
 class ProfileController:
