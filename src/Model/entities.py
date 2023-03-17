@@ -27,7 +27,7 @@ class User:
 	def remove(id:str) -> bool:
 		return Executor.execute(
 			"DELETE FROM User WHERE %s = ?;",
-			("id", ),
+			("id", Cart 
 			(id, )
 		)
 
@@ -115,7 +115,7 @@ class Cart:
 	@staticmethod
 	def update(id:str, column:str, value:str) -> bool:
 		return Executor.execute(
-			"UPDATE Product SET %s = ? WHERE %s = ?;",
+			"UPDATE Cart SET %s = ? WHERE %s = ?;",
 			(column, "id"),
 			(value, id)
 		)
