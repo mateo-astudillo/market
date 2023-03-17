@@ -27,7 +27,7 @@ class User:
 	def remove(id:str) -> bool:
 		return Executor.execute(
 			"DELETE FROM User WHERE %s = ?;",
-			("id", Cart 
+			("id", )
 			(id, )
 		)
 
@@ -185,6 +185,22 @@ class Product:
 			"UPDATE Product SET %s = ? WHERE %s = ?;",
 			(column, "id"),
 			(value, id)
+		)
+
+	@staticmethod
+	def get_value(id:int, column:str) -> list:
+		return Executor.execute_fetchone(
+			"SELECT %s FROM Product WHERE %s = ?;",
+			(column, ),
+			(id, )
+		)
+
+	@staticmethod
+	def get_one(id:int) -> list:
+		return Executor.execute_fetchone(
+			"SELECT %s, %s, %s, %s FROM Product AS P INNER JOIN Brand As B ON %s = %s WHERE %s = ?;",
+			("P.name", "B.name", "P.stock","P.price", "P.brand_id", "B.id", "P.id"),
+			(id, )
 		)
 
 	@staticmethod
