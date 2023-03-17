@@ -3,8 +3,12 @@ from Controller import ProfileController, ShopController
 
 
 class Product(CTkFrame):
-	def __init__(self, master, name:str, brand:str, stock:int, price:float):
+	def __init__(self, master, name:str, brand:str, stock:int, price:float, user_id:int):
 		super().__init__(master)
+		self.name = name
+		self.brand = brand
+		self.price = price
+		self.user_id = user_id
 
 		self.stock = stock
 		self.stock_var = StringVar( value=str(stock) )
@@ -29,7 +33,7 @@ class Product(CTkFrame):
 		self.stock_var.set( value=str(self.stock) )
 		if self.stock == 0:
 			self.pack_forget()
-		# ShopController.add_to_cart(self)
+		ShopController.add_to_cart(self.user_id, self.name, self.brand, self.stock)
 
 
 class Shop(CTkFrame):
@@ -63,11 +67,12 @@ class Shop(CTkFrame):
 	def show_products(self):
 		for p in self.products:
 			p.show()
-
+	
 	def load_products(self):
+		user_id = self.view.controller.user_id
 		for p in ShopController.get_products():
 			name, brand, stock, price = p.values()
-			product = Product(self.table, name, brand, stock, price)
+			product = Product(self.table, name, brand, stock, price, user_id)
 			self.products.append(product)
 
 
