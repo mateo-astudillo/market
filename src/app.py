@@ -17,11 +17,11 @@ class App:
 
 
 if __name__  == "__main__":
-	from Controller import ShopController
+	from Controller import *
 	from Model import *
 	print("Start")
 	app = App()
 	app.run()
-	# print(Product.get_id("MOCHILA", 1))
-	# print(Brand.get_id("EVERLAST"))
-	ShopController.add_to_cart(1, "MOCHILA", "EVERLAST", 1)
+	print(
+		CartController.get_products(1)
+	)

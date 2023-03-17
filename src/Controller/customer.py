@@ -52,10 +52,11 @@ class CartController:
 		return Cart.update(cart_id, "amount", amount)
 
 	@staticmethod
-	def get_products():
+	def get_products(user_id:int) -> list:
 		product_ids = Cart.get_product_ids(user_id)
 		products = []
 		for id in product_ids:
+			print(id)
 			name, brand, stock, price = Product.get_one(id)
 			p = {
 				"name": name.capitalize(),

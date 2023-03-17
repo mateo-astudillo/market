@@ -138,10 +138,10 @@ class Cart:
 			("product_id", "user_id"),
 			(user_id, )
 		)
-		for id in id_list:
-			id = id[0]
+		ids = []
+		for t in id_list:
+			ids.append(t[0])
 		return ids
-			
 
 
 class Sale:
