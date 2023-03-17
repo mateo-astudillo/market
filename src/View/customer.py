@@ -2,6 +2,36 @@ from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTk
 from Controller import ProfileController, ShopController
 
 
+class Product(CTkFrame):
+	def __init__(self, master, name:str, brand:str, stock:int, price:float):
+		super().__init__(master)
+
+		self.stock = stock
+		self.stock_var = StringVar( value=str(stock) )
+
+		self.labels = {
+			"name": CTkLabel(self, text=name),
+			"brand": CTkLabel(self, text=brand),
+			"stock": CTkEntry(self, textvariable=self.stock_var, state="disable"),
+			"price": CTkLabel( self, text=str(price) )
+		}
+
+		self.add_btn = CTkButton(self, text="Add", command=self.add)
+
+	def show(self):
+		self.pack()
+		for l in self.labels.values():
+			l.pack(side="left", padx=4)
+		self.add_btn.pack(side="right", expand=True)
+		
+	def add(self):
+		self.stock -= 1
+		self.stock_var.set( value=str(self.stock) )
+		if self.stock == 0:
+			self.pack_forget()
+		# ShopController.add_to_cart(self)
+
+
 class Shop(CTkFrame):
 	def __init__(self, view):
 		super().__init__(view)
@@ -14,7 +44,7 @@ class Shop(CTkFrame):
 		self.credit = CTkLabel(self.top, text="Credit $500")
 
 		#TABLE
-		self.table = CTkScrollableFrame(self)
+		self.table = CTkScrollableFrame(self, width=700)
 		self.products = []
 		self.load_products()
 
@@ -32,27 +62,13 @@ class Shop(CTkFrame):
 
 	def show_products(self):
 		for p in self.products:
-			p.get("frame").pack()
-			for l in p.get("labels"):
-				l.pack(side="left", padx=5)
-			p.get("button").pack(side="right")
+			p.show()
 
 	def load_products(self):
 		for p in ShopController.get_products():
-			frame = CTkFrame(self.table)
-			button = CTkButton(frame, text="Add", command=lambda: self.add(p))
-			labels = []
-			for value in p.values():
-				l = CTkLabel(frame, text=value)
-				labels.append(l)
-			p["frame"] = frame
-			p["labels"] = labels
-			p["button"] = button
-			p["in_cart"] = False
-			self.products.append(p)
-
-	def add(self, product):
-		product["in_cart"] = True
+			name, brand, stock, price = p.values()
+			product = Product(self.table, name, brand, stock, price)
+			self.products.append(product)
 
 
 class Cart(CTkFrame):

@@ -7,6 +7,7 @@ from .inventory import Options, Add, Edit
 class View(CTk):
 	def __init__(self):
 		super().__init__()
+		self.geometry("700x700")
 
 		self.controller = None
 
