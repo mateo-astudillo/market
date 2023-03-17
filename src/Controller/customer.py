@@ -53,15 +53,15 @@ class CartController:
 
 	@staticmethod
 	def get_products(user_id:int) -> list:
-		product_ids = Cart.get_product_ids(user_id)
+		products_cart = Cart.get_products(user_id)
 		products = []
-		for id in product_ids:
+		for id, amount in products_cart:
 			print(id)
 			name, brand, stock, price = Product.get_one(id)
 			p = {
 				"name": name.capitalize(),
 				"brand": brand.capitalize(),
-				"stock": int(stock),
+				"amount": amount,
 				"price": float(price)
 			}
 			products.append(p)
