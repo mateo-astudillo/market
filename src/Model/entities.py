@@ -131,6 +131,18 @@ class Cart:
 		)[0]
 		return int(id)
 
+	@staticmethod
+	def get_product_ids(user_id:int) -> list:
+		id_list = Executor.execute_fetchall(
+			"SELECT %s FROM Cart WHERE %s = ?;",
+			("product_id", "user_id"),
+			(user_id, )
+		)
+		ids = []
+		for t in id_list:
+			ids.append(t[0])
+		return ids
+
 
 class Sale:
 	@staticmethod
