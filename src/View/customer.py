@@ -1,5 +1,5 @@
 from customtkinter import CTkFrame, CTkLabel, CTkButton, CTkScrollableFrame, CTkEntry, StringVar
-from Controller import ProfileController, ShopController
+from Controller import ProfileController, ShopController, CartController
 
 
 class Product(CTkFrame):
@@ -9,6 +9,7 @@ class Product(CTkFrame):
 		self.brand = brand
 		self.price = price
 		self.user_id = user_id
+		self.user = 0
 
 		self.stock = stock
 		self.stock_var = StringVar( value=str(stock) )
@@ -21,19 +22,23 @@ class Product(CTkFrame):
 		}
 
 		self.add_btn = CTkButton(self, text="Add", command=self.add)
+		self.remove_btn = CTkButton(self, text="Remove", command=self.remove)
 
 	def show(self):
 		self.pack()
 		for l in self.labels.values():
 			l.pack(side="left", padx=4)
-		self.add_btn.pack(side="right", expand=True)
 		
 	def add(self):
 		self.stock -= 1
+		self.user += 1
 		self.stock_var.set( value=str(self.stock) )
 		if self.stock == 0:
 			self.pack_forget()
-		ShopController.add_to_cart(self.user_id, self.name, self.brand, self.stock)
+		ShopController.add_to_cart(self.user_id, self.name, self.brand, self.user)
+
+	def remove(self):
+		pass
 
 
 class Shop(CTkFrame):
@@ -67,6 +72,7 @@ class Shop(CTkFrame):
 	def show_products(self):
 		for p in self.products:
 			p.show()
+			p.add_btn.pack(side="right", expand=True)
 	
 	def load_products(self):
 		user_id = self.view.controller.user_id
@@ -95,27 +101,9 @@ class Cart(CTkFrame):
 		self.pack_forget()
 
 	def add_product(self):
-		pr = [
-			{"name":"Aceite", "brand":"Natura", "price":340, "icon":"🗑️"},
-			{"name":"Atun", "brand":"Carrefour", "price":200,"icon":"🗑️"},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600,"icon":"🗑️"},
-			{"name":"Aceite", "brand":"Natura", "price":340,"icon":"🗑️"},
-			{"name":"Atun", "brand":"Carrefour", "price":200,"icon":"🗑️"},
-			{"name":"Autito", "brand":"Hot Wheels", "price":600,"icon":"🗑️"},
-			{"name":"Aceite", "brand":"Natura", "price":340,"icon":"🗑️"},
-			{"name":"Atun", "brand":"Carrefour", "price":200,"icon":"🗑️"}
-		]
-		for p in pr:
-			f = CTkFrame(self.table)
-			name = CTkLabel(f, text=p.get("name"))
-			brand = CTkLabel(f, text=p.get("brand"))
-			price = CTkLabel(f, text=p.get("price"))
-			remove = CTkButton(f, text=p.get("icon"))
-			f.pack()
-			name.pack(side="left", ipadx=5)
-			brand.pack(side="left", ipadx=5)
-			price.pack(side="left", ipadx=5)
-			remove.pack(side="left", ipadx=5)
+		user_id = self.view.controller.user_id
+		p = CartController.get_products(user_id)
+		print(p)
 
 
 class Profile(CTkFrame):
