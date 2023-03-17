@@ -38,7 +38,11 @@ class Product(CTkFrame):
 		ShopController.add_to_cart(self.user_id, self.name, self.brand, self.user)
 
 	def remove(self):
-		pass
+		self.stock -= 1
+		self.user += 1
+		self.stock_var.set( value=str(self.stock) )
+		if self.stock == 0:
+			self.pack_forget()
 
 
 class Shop(CTkFrame):
@@ -72,7 +76,7 @@ class Shop(CTkFrame):
 	def show_products(self):
 		for p in self.products:
 			p.show()
-			p.add_btn.pack(side="right", expand=True)
+			p.add_btn.pack(side="right")
 	
 	def load_products(self):
 		user_id = self.view.controller.user_id
@@ -86,24 +90,38 @@ class Cart(CTkFrame):
 	def __init__(self, view):
 		super().__init__(view)
 		self.view = view
-		self.table = CTkScrollableFrame(self)
-		self.btn_buy = CTkButton(self, text="Buy")
+		self.table = CTkScrollableFrame(self, width=700)
+		self.btn_buy = CTkButton(self, text="Buy", command=self.buy)
 		self.btn_back = CTkButton(self, text="Back", command= lambda: self.view.go("shop"))
-		self.add_product()
+
+		self.products = []
+		self.load_products()
 
 	def show(self):
 		self.pack()
 		self.table.pack()
 		self.btn_buy.pack(side="right")
 		self.btn_back.pack(side="left")
+		self.show_products()
+
+	def show_products(self):
+		for p in self.products:
+			p.show()
+			p.remove_btn.pack(side="right")
 
 	def hide(self):
 		self.pack_forget()
 
-	def add_product(self):
+	def load_products(self):
 		user_id = self.view.controller.user_id
-		p = CartController.get_products(user_id)
-		print(p)
+		for p in CartController.get_products(user_id):
+			name, brand, amount, price = p.values()
+			product = Product(self.table, name, brand, amount, price, user_id)
+			self.products.append(product)
+
+	def buy(self):
+		for p in self.products:
+			p.pack_forget()
 
 
 class Profile(CTkFrame):
