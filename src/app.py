@@ -23,6 +23,3 @@ if __name__  == "__main__":
 	print("Start")
 	app = App()
 	app.run()
-	# print(
-	# 	CartController.get_products(2)
-	# )

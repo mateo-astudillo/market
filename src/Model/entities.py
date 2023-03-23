@@ -55,6 +55,7 @@ class User:
 			("password", "id"),
 			(password, id)
 		)
+	@staticmethod
 
 	@staticmethod
 	def login(username:str, password:str) -> bool:
@@ -107,10 +108,10 @@ class Cart:
 	@staticmethod
 	def remove(user_id:int, product_id:int) -> bool:
 		return Executor.execute(
-			"DELETE FROM Cart WHERE %s = ? and %s = ?;",
+			"SELECT %s FROM Cart WHERE %s = ? AND %s = ?;",
 			("user_id", "product_id"),
 			(user_id, product_id)
-		)
+		)[0]
 
 	@staticmethod
 	def update(id:str, column:str, value:str) -> bool:
@@ -139,12 +140,13 @@ class Cart:
 			(user_id, )
 		)
 
+	@staticmethod
 	def get_amount(user_id, product_id):
 		return Executor.execute_fetchone(
-			"SELECT %s FROM Cart WHERE %s = ? and %s = ?;",
-			"amount, user_id, product_id",
+			"SELECT %s FROM Cart WHERE %s = ? AND %s = ?;",
+			("amount", "user_id", "product_id"),
 			(user_id, product_id)
-		)
+		)[0]
 
 
 class Sale:
@@ -211,7 +213,7 @@ class Product:
 		)
 
 	@staticmethod
-	def get_one(id:int) -> list:
+	def get_one(id:int) -> tuple:
 		return Executor.execute_fetchone(
 			"SELECT %s, %s, %s, %s FROM Product AS P INNER JOIN Brand As B ON %s = %s WHERE %s = ?;",
 			("P.name", "B.name", "P.stock","P.price", "P.brand_id", "B.id", "P.id"),
