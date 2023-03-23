@@ -39,7 +39,7 @@ class ProductShop(Product):
 		self.stock_var.set( value=str(self.stock) )
 		if self.stock == 0:
 			self.pack_forget()
-		ShopController.add_to_cart(self.user_id, self.name, self.brand, 1)
+		ShopController.add_to_cart(self.user_id, self.name, self.brand)
 
 
 class ProductCart(Product):
@@ -50,7 +50,6 @@ class ProductCart(Product):
 		self.price = price
 		self.amount = amount
 		self.user_id = user_id
-		self.stock = 0
 
 		self.amount_var = StringVar( value=str(amount) )
 
@@ -68,9 +67,11 @@ class ProductCart(Product):
 			l.pack(side="left", padx=4)
 
 	def remove(self):
-		pass
-
-		
+		self.amount -= 1
+		self.amount_var.set( value=str(self.amount) )
+		if self.amount == 0:
+			self.pack_forget()
+		CartController.remove_from_cart(self.user_id, self.name, self.brand)
 	
 
 class Shop(CTkFrame):
