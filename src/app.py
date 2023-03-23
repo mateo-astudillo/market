@@ -18,14 +18,8 @@ class App:
 
 
 if __name__  == "__main__":
-	from Controller import *
-	from Model import *
+	# from Controller import *
+	# from Model import *
 	print("Start")
-	# app = App()
-	# app.run()
-	for p in CartController.get_products(3):
-		print(p)
-
-	print(
-		Cart.get_amount(2,4)
-	)
+	app = App()
+	app.run()
