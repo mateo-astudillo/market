@@ -3,15 +3,23 @@ from Controller import ProfileController, ShopController, CartController
 
 
 class Product(CTkFrame):
+	def __init__(self, master):
+		super().__init__(master)
+
+	def show(self):
+		self.pack()
+
+
+class ProductShop(Product):
 	def __init__(self, master, name:str, brand:str, stock:int, price:float, user_id:int):
 		super().__init__(master)
 		self.name = name
 		self.brand = brand
 		self.price = price
-		self.user_id = user_id
-		self.user = 0
-
 		self.stock = stock
+		self.user_id = user_id
+		self.amount = 0
+
 		self.stock_var = StringVar( value=str(stock) )
 
 		self.labels = {
@@ -22,28 +30,50 @@ class Product(CTkFrame):
 		}
 
 		self.add_btn = CTkButton(self, text="Add", command=self.add)
-		self.remove_btn = CTkButton(self, text="Remove", command=self.remove)
+		self.add_btn.pack()
 
-	def show(self):
-		self.pack()
 		for l in self.labels.values():
 			l.pack(side="left", padx=4)
 		
 	def add(self):
 		self.stock -= 1
-		self.user += 1
+		self.amount += 1
 		self.stock_var.set( value=str(self.stock) )
 		if self.stock == 0:
 			self.pack_forget()
-		ShopController.add_to_cart(self.user_id, self.name, self.brand, self.user)
+		ShopController.add_to_cart(self.user_id, self.name, self.brand, self.amount)
+
+
+class ProductCart(Product):
+	def __init__(self, master, name:str, brand:str, amount:int, price:float, user_id:int):
+		super().__init__(master)
+		self.name = name
+		self.brand = brand
+		self.price = price
+		self.amount = amount
+		self.user_id = user_id
+		self.stock = 0
+
+		self.amount_var = StringVar( value=str(amount) )
+
+		self.labels = {
+			"name": CTkLabel(self, text=name),
+			"brand": CTkLabel(self, text=brand),
+			"amount": CTkEntry(self, textvariable=self.amount_var, state="disable"),
+			"price": CTkLabel( self, text=str(price) )
+		}
+
+		self.remove_btn = CTkButton(self, text="Remove", command=self.remove)
+		self.remove_btn.pack()
+
+		for l in self.labels.values():
+			l.pack(side="left", padx=4)
 
 	def remove(self):
-		self.stock -= 1
-		self.user += 1
-		self.stock_var.set( value=str(self.stock) )
-		if self.stock == 0:
-			self.pack_forget()
+		pass
 
+		
+	
 
 class Shop(CTkFrame):
 	def __init__(self, view):
@@ -82,7 +112,7 @@ class Shop(CTkFrame):
 		user_id = self.view.controller.user_id
 		for p in ShopController.get_products():
 			name, brand, stock, price = p.values()
-			product = Product(self.table, name, brand, stock, price, user_id)
+			product = ProductShop(self.table, name, brand, stock, price, user_id)
 			self.products.append(product)
 
 
@@ -116,7 +146,7 @@ class Cart(CTkFrame):
 		user_id = self.view.controller.user_id
 		for p in CartController.get_products(user_id):
 			name, brand, amount, price = p.values()
-			product = Product(self.table, name, brand, amount, price, user_id)
+			product = ProductCart(self.table, name, brand, amount, price, user_id)
 			self.products.append(product)
 
 	def buy(self):
