@@ -27,6 +27,8 @@ class ShopController:
 		Product.update(product_id, "stock", stock)
 		if Cart.exists(user_id, product_id):
 			id = Cart.get_id(user_id, product_id)
+			amount_db = Cart.get_amount(user_id, product_id)[0]
+			amount += amount_db
 			return Cart.update(id, "amount", amount)
 		return Cart.add(user_id, product_id, amount)
 
@@ -56,7 +58,6 @@ class CartController:
 		products_cart = Cart.get_products(user_id)
 		products = []
 		for id, amount in products_cart:
-			print(id)
 			name, brand, stock, price = Product.get_one(id)
 			p = {
 				"name": name.capitalize(),
