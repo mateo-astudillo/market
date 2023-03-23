@@ -139,6 +139,13 @@ class Cart:
 			(user_id, )
 		)
 
+	def get_amount(user_id, product_id):
+		return Executor.execute_fetchone(
+			"SELECT %s FROM Cart WHERE %s = ? and %s = ?;",
+			"amount, user_id, product_id",
+			(user_id, product_id)
+		)
+
 
 class Sale:
 	@staticmethod
