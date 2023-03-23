@@ -17,34 +17,52 @@ class ShopController:
 		return products
 
 	@staticmethod
-	def add_to_cart(user_id:int, product_name:str, brand_name:str, amount:int) -> bool:
+	def add_to_cart(user_id:int, product_name:str, brand_name:str, amount:int = 1) -> bool:
 		product_name = product_name.upper()
 		brand_name = brand_name.upper()
 		brand_id = Brand.get_id(brand_name)
 		product_id = Product.get_id(product_name, brand_id)
 		stock = Product.get_value(product_id, "stock")
-		stock = int(stock[0]) - 1
+		stock = int(stock) - 1
 		Product.update(product_id, "stock", stock)
 		if Cart.exists(user_id, product_id):
 			id = Cart.get_id(user_id, product_id)
 			amount_db = Cart.get_amount(user_id, product_id)
-			amount += amount_db
-			return Cart.update(id, "amount", amount)
+			amount_db += amount
+			return Cart.update(id, "amount", amount_db)
 		return Cart.add(user_id, product_id, amount)
 
 
 class CartController:
 	@staticmethod
 	def add(user_id:int, product_name:str, brand_name:str, amount:int):
+		product_name = product_name.upper()
+		brand_name = brand_name.upper()
 		brand_id = Brand.get_id(brand_name)
 		product_id = Product.get_id(product_name, brand_id)
 		return Cart.add(user_id, product_id, amount)
 
 	@staticmethod
 	def remove(user_id:int, product_name:str, brand_name:str):
+		product_name = product_name.upper()
+		brand_name = brand_name.upper()
 		brand_id = Brand.get_id(brand_name)
 		product_id = Product.get_id(product_name, brand_id)
 		return Cart.remove(user_id, product_id)
+
+	@staticmethod
+	def remove_from_cart(user_id:int, product_name:str, brand_name:str, amount:int = 1) -> bool:
+		product_name = product_name.upper()
+		brand_name = brand_name.upper()
+		brand_id = Brand.get_id(brand_name)
+		product_id = Product.get_id(product_name, brand_id)
+		stock = Product.get_value(product_id, "stock")
+		stock = int(stock) + 1
+		Product.update(product_id, "stock", stock)
+		id = Cart.get_id(user_id, product_id)
+		amount_db = Cart.get_amount(user_id, product_id)
+		amount_db -= amount
+		return Cart.update(id, "amount", amount_db)
 
 	@staticmethod
 	def amount(user_id:int, product_name:str, brand_name:str, amount:int):
