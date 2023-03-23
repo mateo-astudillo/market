@@ -62,7 +62,7 @@ class CartController:
 			p = {
 				"name": name.capitalize(),
 				"brand": brand.capitalize(),
-				"amount": amount,
+				"amount": int(amount),
 				"price": float(price)
 			}
 			products.append(p)
