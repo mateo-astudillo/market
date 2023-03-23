@@ -35,13 +35,11 @@ class ProductShop(Product):
 			l.pack(side="left", padx=4)
 		
 	def add(self):
-		self.add_btn.configure(state="disable")
 		self.stock -= 1
 		self.stock_var.set( value=str(self.stock) )
 		if self.stock == 0:
 			self.pack_forget()
 		ShopController.add_to_cart(self.user_id, self.name, self.brand, 1)
-		self.add_btn.configure(state="enable")
 
 
 class ProductCart(Product):
