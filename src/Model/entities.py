@@ -210,7 +210,7 @@ class Product:
 			"SELECT %s FROM Product WHERE %s = ?;",
 			(column, "id"),
 			(id, )
-		)
+		)[0]
 
 	@staticmethod
 	def get_one(id:int) -> tuple:
