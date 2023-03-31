@@ -55,7 +55,6 @@ class User:
 			("password", "id"),
 			(password, id)
 		)
-	@staticmethod
 
 	@staticmethod
 	def login(username:str, password:str) -> bool:
